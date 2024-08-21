@@ -9,6 +9,7 @@ export async function GET() {
 export async function POST(req: NextRequest) {
     const recordBody = await req.text()      
 
+    console.log(recordBody)
     
 
     return NextResponse.json({ "req.body": recordBody})
