@@ -7,11 +7,9 @@ export async function GET() {
 }
 
 export async function POST(req: NextRequest) {
-    console.log(await req.text())           
-
-    console.log(await req.json())           
+    const recordBody = req.text()      
 
     
 
-    return NextResponse.json({ "req.body": req.body })
+    return NextResponse.json({ "req.body": recordBody})
 }
