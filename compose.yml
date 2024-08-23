@@ -1,5 +1,5 @@
 services:
-  wohnalert-app:
+  wohnalert:
     image: wohnalert
     restart: always
     ports:
