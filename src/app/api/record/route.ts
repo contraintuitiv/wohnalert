@@ -224,7 +224,7 @@ function parseHowoge(data: string[], extractedRecords: ExtractedRecord[]) {
 
 
 
-export async function PUT(req: NextRequest) {
+export async function POST(req: NextRequest) {
 
     // via body the UUID is passed as raw text
     const uuid = await req.text()
