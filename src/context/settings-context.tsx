@@ -1,7 +1,5 @@
 "use client"
-import { useSearchParams } from "next/navigation";
 import { createContext, ReactNode, useContext, useEffect, useState } from "react";
-import { LoadingSpinner } from "@/components/ui/loading-spinner";
 
 export interface Filters {
     boroughs?: string[]
@@ -28,8 +26,6 @@ const SettingsContext = createContext<{
 
 
 export const SettingsProvider = ({ children }: { children: ReactNode }) => {
-    const query = useSearchParams().toString()
-
     const [settings, setSettings] = useState<Settings>({ filters: {} });
 
     const updateSettings = (settings: Settings) => {
