@@ -1,8 +1,8 @@
 /** wrapper for fetch with changedection preconfigured */
 
 
-export function fetchCd(endpoint: string, init?: RequestInit): Promise<Response> {
-    return fetch(`${process.env.CD_API}${endpoint}`, {
+export async function fetchCd(endpoint: string, init?: RequestInit): Promise<Response> {
+    return await fetch(`${process.env.CD_API}${endpoint}`, {
         ...init,
         headers: {
             ...init?.headers,
