@@ -1,4 +1,5 @@
 import { NextResponse } from "next/server"
+import { fetchCd } from "../../../../lib/fetch"
 
 export interface Watch {
     last_changed: number;
@@ -11,20 +12,10 @@ export interface Watch {
 
 export type Watches = Record<string, Watch>;
 
-
 export async function GET() {
     // find out title of watch
-    const response = await fetch(`${process.env.CD_API}/watch`, {
-        headers: {
-            "x-api-key": process.env.CD_API_KEY || ""
-        }
-    })
+    const response = await fetchCd(`/watch`)
     const data = await response.json()
 
-    console.log(`${process.env.CD_API}/watch, {
-        headers: {
-            "x-api-key": ${process.env.CD_API_KEY} || ""
-        }
-    }`, data)
     return NextResponse.json(data)
-}   
+}
