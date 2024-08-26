@@ -3,14 +3,40 @@ import { NextRequest, NextResponse } from "next/server";
 import validator from 'validator';
 import { fetchCd } from "../../../../lib/fetchCd";
 import { findLocation, toNumber } from "../../../../lib/util";
+import { NextApiRequest } from "next";
 
 const prisma = new PrismaClient()
 
 
-export async function GET() {
+export async function GET(req: NextRequest) {
+    const url = new URL(req.url)
+    const outputFormat = url.searchParams.get("output")
     const records = await prisma.record.findMany({ take: 50, orderBy: { createdAt: "desc" } })
 
-    return NextResponse.json({records})
+
+
+    if (outputFormat === "text") {
+        let output = ""
+        for (const record of records) {
+            output +=
+                `-------------------------------------------
+[${record.landlord}] ${record.wbs ? "WBS" : ""} ${record.description}
+
+${record.url}
+
+${record.rent}€ | ${record.rooms} Zimmer | ${record.size}m²
+${record.borough}${record.suburb ? `, ` : ""}${record.suburb}${record.neighbourhood ? `, ` : ""}${record.neighbourhood}
+${record.road} ${record.house_number}\n\n`
+
+            for (const property of JSON.parse(record.properties)) output += `*${property} `
+
+            output+=`\n\nKarte: https://osm.org/?mlat=${record.lat}&mlon=${record.long}#map=16/${record.lat}/${record.long}
+-------------------------------------------\n\n\n`
+        }
+        return new NextResponse(output, { headers: { "Content-Type": "text/plain; charset=utf-8" } })
+    }
+
+    return NextResponse.json({ records })
 }
 
 interface ExtractedRecord {
