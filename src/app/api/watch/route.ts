@@ -11,7 +11,7 @@ export interface Watch {
 
 export type Watches = Record<string, Watch>;
 
-export async function fetchCd(endpoint: string, init?: RequestInit): Promise<Response> {
+async function fetchCd(endpoint: string, init?: RequestInit): Promise<Response> {
     return await fetch(`${process.env.CD_API}${endpoint}`, {
         ...init,
         headers: {
