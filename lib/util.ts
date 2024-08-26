@@ -1,3 +1,4 @@
+import { Filters } from "@/context/settings-context";
 import currency from "currency.js";
 
 export function toNumber(str: string): number {
@@ -40,3 +41,26 @@ export async function findLocation(query: string): Promise<LocationData> {
 
     return locations[0]
 }
+
+export function osmLink(lat: number, long:number): string {
+    return `https://osm.org/?mlat=${lat}&mlon=${long}#map=16/${lat}/${long}`
+}
+
+export function filtersToQueryString(filters: Filters) {
+    const params = new URLSearchParams();
+  
+    // Convert each filter to query string format
+    for (const [key, value] of Object.entries(filters)) {
+      if (value !== undefined && value !== null) {
+        if (Array.isArray(value)) {
+          // Join array values with commas and append to params
+          params.append(key, value.join(','));
+        } else {
+          // Append single value to params
+          params.append(key, value);
+        }
+      }
+    }
+  
+    return params.toString();
+  }

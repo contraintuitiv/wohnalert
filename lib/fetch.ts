@@ -1,5 +1,6 @@
 /** wrapper for fetch with changedection preconfigured */
 
+
 export function fetchCd(endpoint: string, init?: RequestInit): Promise<Response> {
     return fetch(`${process.env.CD_API}${endpoint}`, {
         ...init,
@@ -10,7 +11,7 @@ export function fetchCd(endpoint: string, init?: RequestInit): Promise<Response>
     })
 }
 
-export async function fetchJson(endpoint: string) {
+export async function fetchJson<T>(endpoint: string): Promise<T> {
     try {
         const response = await fetch(endpoint)
 
@@ -23,5 +24,8 @@ export async function fetchJson(endpoint: string) {
         console.error(`error fetching data ${err}`)
     }
 
+
     console.error(`error fetching data`)
+
+    return [] as T
 }

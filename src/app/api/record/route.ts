@@ -1,18 +1,71 @@
-import { PrismaClient, Record } from "@prisma/client";
 import { NextRequest, NextResponse } from "next/server";
 import validator from 'validator';
 import { fetchCd } from "../../../../lib/fetch";
-import { findLocation, toNumber } from "../../../../lib/util";
-import { NextApiRequest } from "next";
-
-const prisma = new PrismaClient()
+import { findLocation, osmLink, toNumber } from "../../../../lib/util";
+import { prisma } from "../../../../lib/prisma";
 
 
 export async function GET(req: NextRequest) {
     const url = new URL(req.url)
     const outputFormat = url.searchParams.get("output")
-    const records = await prisma.record.findMany({ take: 50, orderBy: { createdAt: "desc" } })
 
+    const numberFromQuery = (key: string) => {
+        let queryVar;
+        if (queryVar = url.searchParams.get(key)) {
+            if (parseInt(queryVar)) {
+                return parseInt(queryVar)
+            }
+        }
+
+        return undefined
+    }
+
+    const arrayFromQuery = (key: string) => {
+        let queryVar;
+        if (queryVar = url.searchParams.get(key)) {
+            return queryVar.split(",")
+        }
+
+        return []
+    }
+
+    const minRent = numberFromQuery("minRent") || 1
+    const maxRent = numberFromQuery("maxRent") || 99999999999
+    const minRooms = numberFromQuery("minRooms") || 1
+    const maxRooms = numberFromQuery("maxRooms") || 99999999999
+    const minSize = numberFromQuery("minSize") || 1
+    const maxSize = numberFromQuery("maxSize") || 99999999999
+    const boroughs = arrayFromQuery("boroughs") || []
+
+
+
+    const records = await prisma.record.findMany({
+        take: 50,
+        orderBy: { createdAt: "desc" },
+        where: {
+            ...(boroughs.length > 0
+                ? {
+                    OR:
+                        boroughs.map(name => ({
+                            borough: name,
+                        }))
+                }
+                : {}
+            ),
+            rent: {
+                gte: minRent,
+                lte: maxRent
+            },
+            size: {
+                gte: minSize,
+                lte: maxSize
+            },
+            rooms: {
+                gte: minRooms,
+                lte: maxRooms
+            },
+        }
+    })
 
 
     if (outputFormat === "text") {
@@ -28,12 +81,12 @@ ${record.road} ${record.house_number}\n\n`
 
             for (const property of JSON.parse(record.properties)) output += `*${property} `
 
-            output+=`\n\nAuf der Karte: https://osm.org/?mlat=${record.lat}&mlon=${record.long}#map=16/${record.lat}/${record.long}\n\n\n\n`
+            output += `\n\nAuf der Karte: ${osmLink(record.lat, record.long)}\n\n\n\n`
         }
         return new NextResponse(output, { headers: { "Content-Type": "text/plain; charset=utf-8" } })
     }
 
-    return NextResponse.json({ records })
+    return NextResponse.json([...records])
 }
 
 interface ExtractedRecord {
