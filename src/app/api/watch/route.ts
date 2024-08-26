@@ -1,5 +1,5 @@
 import { NextResponse } from "next/server"
-import { fetchCd } from "../../../../lib/fetchCd"
+import { fetchCd } from "../../../../lib/fetch"
 
 export async function GET() {
     // find out title of watch

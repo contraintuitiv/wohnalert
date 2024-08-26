@@ -1,7 +1,7 @@
 import { PrismaClient, Record } from "@prisma/client";
 import { NextRequest, NextResponse } from "next/server";
 import validator from 'validator';
-import { fetchCd } from "../../../../lib/fetchCd";
+import { fetchCd } from "../../../../lib/fetch";
 import { findLocation, toNumber } from "../../../../lib/util";
 import { NextApiRequest } from "next";
 
@@ -19,9 +19,7 @@ export async function GET(req: NextRequest) {
         let output = ""
         for (const record of records) {
             output +=
-                `-------------------------------------------
-[${record.landlord}] ${record.wbs ? "WBS" : ""} ${record.description}
-
+                `[${record.landlord}] ${record.wbs ? "WBS" : ""} ${record.description}
 ${record.url}
 
 ${record.rent}€ | ${record.rooms} Zimmer | ${record.size}m²
@@ -30,8 +28,7 @@ ${record.road} ${record.house_number}\n\n`
 
             for (const property of JSON.parse(record.properties)) output += `*${property} `
 
-            output+=`\n\nKarte: https://osm.org/?mlat=${record.lat}&mlon=${record.long}#map=16/${record.lat}/${record.long}
--------------------------------------------\n\n\n`
+            output+=`\n\nAuf der Karte: https://osm.org/?mlat=${record.lat}&mlon=${record.long}#map=16/${record.lat}/${record.long}\n\n\n\n`
         }
         return new NextResponse(output, { headers: { "Content-Type": "text/plain; charset=utf-8" } })
     }
