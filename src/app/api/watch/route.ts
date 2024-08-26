@@ -15,8 +15,8 @@ export type Watches = Record<string, Watch>;
 export async function GET() {
     // find out title of watch
     const response = await fetchCd(`/watch`)
-    console.log(response)
     const data = await response.json()
 
+    console.log(data)
     return NextResponse.json(data)
 }   
