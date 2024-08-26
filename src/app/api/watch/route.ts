@@ -21,6 +21,10 @@ export async function GET() {
     })
     const data = await response.json()
 
-    console.log(data)
+    console.log(`${process.env.CD_API}/watch, {
+        headers: {
+            "x-api-key": ${process.env.CD_API_KEY} || ""
+        }
+    }`, data)
     return NextResponse.json(data)
 }   
