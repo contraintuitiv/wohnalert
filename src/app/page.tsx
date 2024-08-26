@@ -24,12 +24,12 @@ export default async function Home() {
             <Filter initialBoroughs={boroughs} />
           </div>
           <div className="mb-5">
+            <RecordsMap />
+          </div>
+          <div>
             <RecordsTable />
           </div>
 
-          <div>
-            <RecordsMap />
-          </div>
         </main>
       </RecordsProvider>
     </SettingsProvider>
