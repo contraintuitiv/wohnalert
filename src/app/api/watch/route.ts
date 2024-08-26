@@ -11,20 +11,14 @@ export interface Watch {
 
 export type Watches = Record<string, Watch>;
 
-async function fetchCd(endpoint: string, init?: RequestInit): Promise<Response> {
-    return await fetch(`${process.env.CD_API}${endpoint}`, {
-        ...init,
-        headers: {
-            ...init?.headers,
-            "x-api-key": process.env.CD_API_KEY || ""
-        }
-    })
-}
-
 
 export async function GET() {
     // find out title of watch
-    const response = await fetchCd(`/watch`)
+    const response = await fetch(`${process.env.CD_API}/watch`, {
+        headers: {
+            "x-api-key": process.env.CD_API_KEY || ""
+        }
+    })
     const data = await response.json()
 
     console.log(data)
