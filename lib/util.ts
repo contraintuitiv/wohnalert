@@ -82,3 +82,39 @@ ${record.road} ${record.house_number}\n\n`
 
   return output
 }
+
+
+export const deconstructFilterQuery = (reqUrl: string) => {
+  const url = new URL(reqUrl)
+  const outputFormat = url.searchParams.get("output")
+
+  const numberFromQuery = (key: string) => {
+      let queryVar;
+      if (queryVar = url.searchParams.get(key)) {
+          if (parseInt(queryVar)) {
+              return parseInt(queryVar)
+          }
+      }
+
+      return undefined
+  }
+
+  const arrayFromQuery = (key: string) => {
+      let queryVar;
+      if (queryVar = url.searchParams.get(key)) {
+          return queryVar.split(",")
+      }
+
+      return []
+  }
+
+  const minRent = numberFromQuery("minRent") || 1
+  const maxRent = numberFromQuery("maxRent") || 99999999999
+  const minRooms = numberFromQuery("minRooms") || 1
+  const maxRooms = numberFromQuery("maxRooms") || 99999999999
+  const minSize = numberFromQuery("minSize") || 1
+  const maxSize = numberFromQuery("maxSize") || 99999999999
+  const boroughs = arrayFromQuery("boroughs") || []
+
+  return ({ minRent, maxRent, minRooms, maxRooms, minSize, maxSize, boroughs, outputFormat })
+}

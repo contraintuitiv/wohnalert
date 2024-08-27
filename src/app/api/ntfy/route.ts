@@ -3,7 +3,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { Ntfy, NtfyCreateInputSchema } from "../../../../prisma/generated/zod";
 import { ZodError } from "zod";
 import { prisma } from "../../../../lib/prisma";
-import { deconstructFilterQuery } from "../record/route";
+import { deconstructFilterQuery } from "../../../../lib/util";
 
 export async function GET(req: NextRequest) {
     const { minRent, maxRent, minRooms, maxRooms, minSize, maxSize, boroughs } = deconstructFilterQuery(req.url)
