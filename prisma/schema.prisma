@@ -33,3 +33,22 @@ model Record {
   wbs           Boolean
   properties    String
 }
+
+model Ntfy {
+  id        String   @id @default(uuid())
+  createdAt DateTime @default(now())
+  host      String   @default("ntfy.sh")
+  topic     String?
+  minRent   Float?    @default(1)
+  maxRent   Float?    @default(99999999999)
+  minRooms  Float?    @default(1)
+  maxRooms  Float?    @default(99999999999)
+  minSize   Float?    @default(1)
+  maxSize   Float?    @default(99999999999)
+  landlords String?   @default("[]")
+  boroughs  String?   @default("[]")
+}
+
+generator zod {
+  provider = "zod-prisma-types"
+}

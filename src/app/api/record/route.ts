@@ -1,12 +1,11 @@
 import { NextRequest, NextResponse } from "next/server";
 import validator from 'validator';
 import { fetchCd } from "../../../../lib/fetch";
-import { findLocation, osmLink, toNumber } from "../../../../lib/util";
+import { findLocation, osmLink, recordAsText, toNumber } from "../../../../lib/util";
 import { prisma } from "../../../../lib/prisma";
 
-
-export async function GET(req: NextRequest) {
-    const url = new URL(req.url)
+export const deconstructFilterQuery = (reqUrl: string) => {
+    const url = new URL(reqUrl)
     const outputFormat = url.searchParams.get("output")
 
     const numberFromQuery = (key: string) => {
@@ -37,7 +36,11 @@ export async function GET(req: NextRequest) {
     const maxSize = numberFromQuery("maxSize") || 99999999999
     const boroughs = arrayFromQuery("boroughs") || []
 
+    return ({ minRent, maxRent, minRooms, maxRooms, minSize, maxSize, boroughs, outputFormat })
+}
 
+export async function GET(req: NextRequest) {
+    const { minRent, maxRent, minRooms, maxRooms, minSize, maxSize, boroughs, outputFormat } = deconstructFilterQuery(req.url)
 
     const records = await prisma.record.findMany({
         take: 50,
@@ -71,17 +74,7 @@ export async function GET(req: NextRequest) {
     if (outputFormat === "text") {
         let output = ""
         for (const record of records) {
-            output +=
-                `[${record.landlord}] ${record.wbs ? "WBS" : ""} ${record.description}
-${record.url}
-
-${record.rent}€ | ${record.rooms} Zimmer | ${record.size}m²
-${record.borough}${record.suburb ? `, ` : ""}${record.suburb}${record.neighbourhood ? `, ` : ""}${record.neighbourhood}
-${record.road} ${record.house_number}\n\n`
-
-            for (const property of JSON.parse(record.properties)) output += `*${property} `
-
-            output += `\n\nAuf der Karte: ${osmLink(record.lat, record.long)}\n\n\n\n`
+            output += recordAsText(record)
         }
         return new NextResponse(output, { headers: { "Content-Type": "text/plain; charset=utf-8" } })
     }
@@ -357,7 +350,7 @@ export async function POST(req: NextRequest) {
 
             const location = await findLocation(record.address)
 
-            await prisma.record.create({
+            const createdRecord = await prisma.record.create({
                 data: {
                     url: record.url,
                     description: record.title,
@@ -376,6 +369,36 @@ export async function POST(req: NextRequest) {
                     properties: JSON.stringify(record.properties)
                 }
             })
+
+            // read out which notifications want this record
+            const ntfys = await prisma.ntfy.findMany({
+                select: {
+                    id: true,
+                    host: true,
+                    topic: true
+                },
+                where: {
+                    AND: [
+                        { OR: [{ minRent: null }, { minRent: { lte: createdRecord.rent } }] },
+                        { OR: [{ maxRent: null }, { maxRent: { gte: createdRecord.rent } }] },
+                        { OR: [{ minRooms: null }, { minRooms: { lte: createdRecord.rooms } }] },
+                        { OR: [{ maxRooms: null }, { maxRooms: { gte: createdRecord.rooms } }] },
+                        { OR: [{ minSize: null }, { minSize: { lte: createdRecord.size } }] },
+                        { OR: [{ maxSize: null }, { maxSize: { gte: createdRecord.size } }] },
+                        { OR: [{ boroughs: null }, { boroughs: { contains: createdRecord.borough } }] },
+                        { OR: [{ landlords: null }, { landlords: { contains: createdRecord.landlord } }] },
+                    ]
+                }
+            })
+
+            // send notifications
+            for (const ntfy of ntfys) {
+                await fetch(`https://${ntfy.host || process.env.NTFY_HOST}/${ntfy.topic || ntfy.id}`, {
+                    method: 'POST',
+                    body: recordAsText(createdRecord)
+                })
+            }
+
         }
 
     }

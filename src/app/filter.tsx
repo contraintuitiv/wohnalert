@@ -5,16 +5,25 @@ import { Checkbox } from "@/components/ui/checkbox"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { Settings, useSettings } from "@/context/settings-context"
-import { useState } from "react"
+import { useCallback, useEffect, useState } from "react"
 import { isNumeric } from "validator"
+import { Ntfy, Prisma } from "@prisma/client"
+import { filtersToQueryString } from "../../lib/util"
+import { fetchJson } from "../../lib/fetch"
+import { useToast } from "@/components/ui/use-toast"
 
 export default function Filter({ initialBoroughs }: { initialBoroughs: string[] }) {
     const { settings, updateSettings } = useSettings()
+    const { toast } = useToast()
 
     const [showFilter, setShowFilter] = useState(false)
     const [maxRent, setMaxRent] = useState(settings.filters.maxRent)
     const [minSize, setMinSize] = useState(settings.filters.minSize)
     const [minRooms, setMinRooms] = useState(settings.filters.minRooms)
+
+    const [ntfy, setNtfy] = useState<Ntfy>()
+
+    const changedParameters = maxRent !== settings.filters.maxRent || minSize !== settings.filters.minSize || minRooms !== settings.filters.minRooms
 
     const allBoroughsChecked = !settings.filters.boroughs || settings.filters.boroughs.length === initialBoroughs.length || settings.filters.boroughs.length === 0
 
@@ -34,15 +43,61 @@ export default function Filter({ initialBoroughs }: { initialBoroughs: string[] 
         updateSettings(newSettings)
     }
 
+    const handleCopyToClipBoardClick = async () => {
+        if (ntfy?.topic || ntfy?.id) {
+            try {
+                await navigator.clipboard.writeText(ntfy.topic || ntfy.id)
+                toast({
+                    title: "In Zwischenablage kopiert",
+                    description: "Ntfy.sh-Topic wurde in die Zwischenablage kopiert"
+                })
+            } catch {
+                toast({
+                    title: "Fehler",
+                    description: "Ntfy.sh-Topic konnte nicht in die Zwischenablage kopiert werden"
+                })
+
+            }
+
+        }
+    }
+
+    const loadNtfy = useCallback(async () => {
+        const currentNtfy = await fetchJson(`/api/ntfy?${filtersToQueryString({ ...settings.filters })}`) as Ntfy
+        setNtfy(currentNtfy)
+    }, [settings.filters])
 
     const updateFilters = () => {
         const newSettings = { ...settings }
         if (maxRent) settings.filters.maxRent = maxRent
         if (minSize) settings.filters.minSize = minSize
         if (minRooms) settings.filters.minRooms = minRooms
+        loadNtfy()
         updateSettings(newSettings)
     }
 
+
+    useEffect(() => {
+        loadNtfy()
+    }, [settings.filters, loadNtfy])
+
+    const handleAddNtfyClick = async () => {
+        const body: Prisma.NtfyCreateInput = {
+            ...settings.filters,
+            boroughs: JSON.stringify(settings.filters.boroughs),
+            landlords: "[]"
+        }
+        await fetch('/api/ntfy', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(body)
+
+        })
+
+        loadNtfy()
+    }
 
     return <>
         <h3 onClick={() => setShowFilter(!showFilter)} className="cursor-pointer hover:underline">
@@ -84,9 +139,8 @@ export default function Filter({ initialBoroughs }: { initialBoroughs: string[] 
                             step="50"
                             min="0"
                             value={maxRent}
-                            onChange={(e) => { if (isNumeric(e.target.value)) { setMaxRent(parseFloat(e.target.value)) } }}
+                            onChange={(e) => { if (isNumeric(e.target.value) || e.target.value === "") { setMaxRent(parseFloat(e.target.value)) } }}
                         />
-                        <Button type="submit" onClick={updateFilters}>filtern</Button>
                     </div>
                     <div className="flex w-full max-w-sm items-center space-x-2">
                         <Label htmlFor="minSize">minimale Größe (m²)</Label>
@@ -96,9 +150,8 @@ export default function Filter({ initialBoroughs }: { initialBoroughs: string[] 
                             value={minSize}
                             step="10"
                             min="0"
-                            onChange={(e) => { if (isNumeric(e.target.value)) { setMinSize(parseFloat(e.target.value)) } }}
+                            onChange={(e) => { if (isNumeric(e.target.value) || e.target.value === "") { setMinSize(parseFloat(e.target.value)) } }}
                         />
-                        <Button type="submit" onClick={updateFilters}>filtern</Button>
                     </div>
                     <div className="flex w-full max-w-sm items-center space-x-2">
                         <Label htmlFor="minRooms">mind. Zimmer</Label>
@@ -107,13 +160,30 @@ export default function Filter({ initialBoroughs }: { initialBoroughs: string[] 
                             placeholder="50.5"
                             min="0"
                             value={minRooms}
-                            onChange={(e) => { if (isNumeric(e.target.value)) { setMinRooms(parseFloat(e.target.value)) } }}
+                            onChange={(e) => { if (isNumeric(e.target.value) || e.target.value === "") { setMinRooms(parseFloat(e.target.value)) } }}
                         />
-                        <Button type="submit" onClick={updateFilters}>filtern</Button>
+
                     </div>
+                    {changedParameters && <Button type="submit" onClick={updateFilters}>Filter anwenden</Button>}
 
                 </div>
 
+
+
             </div>}
+        <div className="mt-1">
+            {!changedParameters && (ntfy
+                ? <div>Push-Benachrichtigung (via {ntfy.host}): <b>
+                    <a
+                        href={`ntfy://${ntfy.host}/${ntfy.id}`}
+                        className="hover:underline"
+                        title="direkt in ntfy.sh-App öffnen"
+                    >
+                        {ntfy.id}
+                    </a></b> <Button onClick={handleCopyToClipBoardClick} variant={"outline"}>📋</Button></div>
+                : <Button onClick={handleAddNtfyClick}>🔔 Push-Notification für diesen Filter erstellen</Button>
+            )}
+
+        </div>
     </>
 }
