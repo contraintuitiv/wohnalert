@@ -122,7 +122,7 @@ export default function Filter({ initialBoroughs }: { initialBoroughs: string[] 
             {showFilter ? '▲' : '▼'} Filter <span className="text-gray-500 text-sm">{settings.filters.boroughs?.join(", ")}{maxRent && ` - max. ${maxRent}€`}{minSize && ` - min. ${minSize}m²`}{minRooms && minRooms > 0 && ` - min. ${minRooms} Zimmer`}</span>
         </h3>
         {showFilter &&
-            <div className="flex flex-col sm:flex-row space-y-5 sm:space-y-0 sm:space-x-5 border border-black rounded-sm p-3">
+            <div className="flex flex-col md:flex-row space-y-5 md:space-y-0 md:space-x-5 border border-black rounded-sm p-3">
                 <div>
                     Bezirke: <div>
                         {initialBoroughs.map(borough => <div key={borough} className="flex items-center space-x-2">
@@ -187,7 +187,8 @@ export default function Filter({ initialBoroughs }: { initialBoroughs: string[] 
                 </div>
 
                 <div className="mt-1">
-                    {!changedParameters && <div><Alert variant="destructive" className="mb-2">Gefilterte Push-Notifications funktionieren noch nicht (zuverlässig)</Alert></div> && (ntfy
+                    <div><Alert variant="destructive" className="mb-2 mt-2 md:mt-0">Gefilterte Push-Notifications funktionieren noch nicht (zuverlässig)</Alert></div>
+                    {!changedParameters && (ntfy
                         ? <div>Push-Benachrichtigung (via {ntfy.host}): <b>
                             <a
                                 href={`ntfy://${ntfy.host}/${ntfy.id}`}
@@ -196,7 +197,7 @@ export default function Filter({ initialBoroughs }: { initialBoroughs: string[] 
                             >
                                 {ntfy.id}
                             </a></b> <Button onClick={handleCopyToClipBoardClick} variant={"outline"}>📋</Button></div>
-                        :<Button onClick={handleAddNtfyClick}>🔔 Push-Notification für diesen Filter erstellen</Button>              
+                        : <Button onClick={handleAddNtfyClick}>🔔 Push-Notification für diesen Filter erstellen</Button>
 
                     )}
                 </div>
