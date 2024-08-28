@@ -186,7 +186,7 @@ export default function Filter({ initialBoroughs }: { initialBoroughs: string[] 
             </div>}
         <div className="mt-1">
 
-            <div>Alle neuen Angebote per Push bekommen (via ntfy.sh). Einfach die App <i>ntfy.sh</i> runterladen: und folgendes Topic anklicken bzw. als Topic eingeben: <b>
+            <div>Alle neuen Angebote per Push bekommen (via ntfy.sh). Einfach die App <a href="https://f-droid.org/de/packages/io.heckel.ntfy/" className="underline" target="_blank" rel="noreferrer">ntfy.sh</a> runterladen: und folgendes Topic anklicken bzw. als Topic eingeben: <b>
                 <a
                     href={`ntfy://ntfy.sh/wohnalerts-via-freizeitstress`}
                     className="hover:underline"
