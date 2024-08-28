@@ -44,10 +44,10 @@ export default function Filter({ initialBoroughs }: { initialBoroughs: string[] 
         updateSettings(newSettings)
     }
 
-    const handleCopyToClipBoardClick = async () => {
+    const handleCopyToClipBoardClick = async (textToCopy?: string) => {
         if (ntfy?.topic || ntfy?.id) {
             try {
-                await navigator.clipboard.writeText(ntfy.topic || ntfy.id)
+                await navigator.clipboard.writeText(textToCopy || ntfy.topic || ntfy.id)
                 toast({
                     title: "In Zwischenablage kopiert",
                     description: "Ntfy.sh-Topic wurde in die Zwischenablage kopiert"
@@ -114,7 +114,7 @@ export default function Filter({ initialBoroughs }: { initialBoroughs: string[] 
                             title="direkt in ntfy.sh-App öffnen"
                         >
                             wohnalerts-via-freizeitstress
-                        </a></b> <Button onClick={handleCopyToClipBoardClick} variant={"outline"}>📋</Button>
+                        </a></b> <Button onClick={() => handleCopyToClipBoardClick("wohnalerts-via-freizeitstress")} variant={"outline"}>📋</Button>
                 </AlertDescription>
             </Alert>
         </div>
@@ -196,7 +196,7 @@ export default function Filter({ initialBoroughs }: { initialBoroughs: string[] 
                                 title="direkt in ntfy.sh-App öffnen"
                             >
                                 {ntfy.id}
-                            </a></b> <Button onClick={handleCopyToClipBoardClick} variant={"outline"}>📋</Button></div>
+                            </a></b> <Button onClick={() => handleCopyToClipBoardClick()} variant={"outline"}>📋</Button></div>
                         : <Button onClick={handleAddNtfyClick}>🔔 Push-Notification für diesen Filter erstellen</Button>
 
                     )}
