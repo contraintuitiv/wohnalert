@@ -43,7 +43,7 @@ const customIcon = new L.DivIcon({
 export default function RecordsMap() {
     const { records } = useRecords()
 
-    return <MapContainer center={[52.5100, 13.3992]} zoom={11} scrollWheelZoom={false} style={{ width: "100%", height: "750px" }}>
+    return <MapContainer center={[52.5100, 13.3992]} zoom={11} scrollWheelZoom={false} className='w-full h-[400px] sm:h-[500px] md:h-[600px]'>
         <TileLayer
             attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
             url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"

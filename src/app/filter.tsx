@@ -104,7 +104,7 @@ export default function Filter({ initialBoroughs }: { initialBoroughs: string[] 
             {showFilter ? '▲' : '▼'} Filter <span className="text-gray-500 text-sm">{settings.filters.boroughs?.join(", ")}{maxRent && ` - max. ${maxRent}€`}{minSize && ` - min. ${minSize}m²`}{minRooms && minRooms > 0 && ` - min. ${minRooms} Zimmer`}</span>
         </h3>
         {showFilter &&
-            <div className="flex space-x-5 border border-black rounded-sm p-3">
+            <div className="flex flex-col sm:flex-row space-y-5 sm:space-y-0 sm:space-x-5 border border-black rounded-sm p-3">
                 <div>
                     Bezirke: <div>
                         {initialBoroughs.map(borough => <div key={borough} className="flex items-center space-x-2">
@@ -168,22 +168,32 @@ export default function Filter({ initialBoroughs }: { initialBoroughs: string[] 
 
                 </div>
 
+                <div className="mt-1">
+                    {!changedParameters && (ntfy
+                        ? <div>Push-Benachrichtigung (via {ntfy.host}): <b>
+                            <a
+                                href={`ntfy://${ntfy.host}/${ntfy.id}`}
+                                className="hover:underline"
+                                title="direkt in ntfy.sh-App öffnen"
+                            >
+                                {ntfy.id}
+                            </a></b> <Button onClick={handleCopyToClipBoardClick} variant={"outline"}>📋</Button></div>
+                        : <Button onClick={handleAddNtfyClick}>🔔 Push-Notification für diesen Filter erstellen (noch nicht zuverlässig</Button>
+                    )}
+                </div>
 
 
             </div>}
         <div className="mt-1">
-            {!changedParameters && (ntfy
-                ? <div>Push-Benachrichtigung (via {ntfy.host}): <b>
-                    <a
-                        href={`ntfy://${ntfy.host}/${ntfy.id}`}
-                        className="hover:underline"
-                        title="direkt in ntfy.sh-App öffnen"
-                    >
-                        {ntfy.id}
-                    </a></b> <Button onClick={handleCopyToClipBoardClick} variant={"outline"}>📋</Button></div>
-                : <Button onClick={handleAddNtfyClick}>🔔 Push-Notification für diesen Filter erstellen</Button>
-            )}
 
+            <div>Alle neuen Angebote per Push bekommen (via ntfy.sh). Einfach die App <i>ntfy.sh</i> runterladen: und folgendes Topic anklicken bzw. als Topic eingeben: <b>
+                <a
+                    href={`ntfy://ntfy.sh/wohnalerts-via-freizeitstress`}
+                    className="hover:underline"
+                    title="direkt in ntfy.sh-App öffnen"
+                >
+                    wohnalerts-via-freizeitstress
+                </a></b> <Button onClick={handleCopyToClipBoardClick} variant={"outline"}>📋</Button></div>
         </div>
     </>
 }
