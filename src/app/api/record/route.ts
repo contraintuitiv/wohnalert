@@ -3,7 +3,7 @@ import validator from 'validator';
 import { fetchCd } from "../../../../lib/fetch";
 import { deconstructFilterQuery, findLocation, recordAsText, toNumber } from "../../../../lib/util";
 import { prisma } from "../../../../lib/prisma";
-
+import * as Sentry from "@sentry/nextjs";
 
 export async function GET(req: NextRequest) {
     const { minRent, maxRent, minRooms, maxRooms, minSize, maxSize, boroughs, outputFormat } = deconstructFilterQuery(req.url)
@@ -356,13 +356,17 @@ export async function POST(req: NextRequest) {
                     ]
                 }
             })
+            const createdRecordAsText = recordAsText(createdRecord)
+
+            Sentry.captureMessage(`loaded following ntfys ${JSON.stringify(ntfys)}, the createdRecord was ${createdRecordAsText}`)
 
             // send notifications
             for (const ntfy of ntfys) {
                 await fetch(`https://${ntfy.host || process.env.NTFY_HOST}/${ntfy.topic || ntfy.id}`, {
                     method: 'POST',
-                    body: recordAsText(createdRecord)
+                    body: createdRecordAsText
                 })
+                Sentry.captureMessage(`Sent ${createdRecord.id}/${createdRecord.description} to https://${ntfy.host || process.env.NTFY_HOST}/${ntfy.topic || ntfy.id}`)
             }
 
         }
