@@ -11,6 +11,7 @@ import { Ntfy, Prisma } from "@prisma/client"
 import { filtersToQueryString } from "../../lib/util"
 import { fetchJson } from "../../lib/fetch"
 import { useToast } from "@/components/ui/use-toast"
+import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert"
 
 export default function Filter({ initialBoroughs }: { initialBoroughs: string[] }) {
     const { settings, updateSettings } = useSettings()
@@ -100,6 +101,23 @@ export default function Filter({ initialBoroughs }: { initialBoroughs: string[] 
     }
 
     return <>
+        <div className="mb-3">
+            <Alert>
+                <AlertTitle>
+                    Alle neuen Angebote per Push bekommen (via ntfy.sh)
+                </AlertTitle>
+                <AlertDescription>
+                    Einfach die App <a href="https://f-droid.org/de/packages/io.heckel.ntfy/" className="underline" target="_blank" rel="noreferrer">ntfy.sh</a> runterladen: und folgendes Topic anklicken bzw. als Topic eingeben: <b>
+                        <a
+                            href={`ntfy://ntfy.sh/wohnalerts-via-freizeitstress`}
+                            className="hover:underline"
+                            title="direkt in ntfy.sh-App öffnen"
+                        >
+                            wohnalerts-via-freizeitstress
+                        </a></b> <Button onClick={handleCopyToClipBoardClick} variant={"outline"}>📋</Button>
+                </AlertDescription>
+            </Alert>
+        </div>
         <h3 onClick={() => setShowFilter(!showFilter)} className="cursor-pointer hover:underline">
             {showFilter ? '▲' : '▼'} Filter <span className="text-gray-500 text-sm">{settings.filters.boroughs?.join(", ")}{maxRent && ` - max. ${maxRent}€`}{minSize && ` - min. ${minSize}m²`}{minRooms && minRooms > 0 && ` - min. ${minRooms} Zimmer`}</span>
         </h3>
@@ -178,22 +196,16 @@ export default function Filter({ initialBoroughs }: { initialBoroughs: string[] 
                             >
                                 {ntfy.id}
                             </a></b> <Button onClick={handleCopyToClipBoardClick} variant={"outline"}>📋</Button></div>
-                        : <Button onClick={handleAddNtfyClick}>🔔 Push-Notification für diesen Filter erstellen (noch nicht zuverlässig</Button>
+                        : <>
+                            <Button onClick={handleAddNtfyClick}>🔔 Push-Notification für diesen Filter erstellen</Button>
+                            <div><Alert variant="destructive" className="mt-2">Gefilterte Push-Notifications funktionieren noch nicht (zuverlässig)</Alert></div>
+                        </>
+
                     )}
                 </div>
 
 
             </div>}
-        <div className="mt-1">
 
-            <div>Alle neuen Angebote per Push bekommen (via ntfy.sh). Einfach die App <a href="https://f-droid.org/de/packages/io.heckel.ntfy/" className="underline" target="_blank" rel="noreferrer">ntfy.sh</a> runterladen: und folgendes Topic anklicken bzw. als Topic eingeben: <b>
-                <a
-                    href={`ntfy://ntfy.sh/wohnalerts-via-freizeitstress`}
-                    className="hover:underline"
-                    title="direkt in ntfy.sh-App öffnen"
-                >
-                    wohnalerts-via-freizeitstress
-                </a></b> <Button onClick={handleCopyToClipBoardClick} variant={"outline"}>📋</Button></div>
-        </div>
     </>
 }
