@@ -187,7 +187,7 @@ export default function Filter({ initialBoroughs }: { initialBoroughs: string[] 
                 </div>
 
                 <div className="mt-1">
-                    {!changedParameters && (ntfy
+                    {!changedParameters && <div><Alert variant="destructive" className="mb-2">Gefilterte Push-Notifications funktionieren noch nicht (zuverlässig)</Alert></div> && (ntfy
                         ? <div>Push-Benachrichtigung (via {ntfy.host}): <b>
                             <a
                                 href={`ntfy://${ntfy.host}/${ntfy.id}`}
@@ -196,10 +196,7 @@ export default function Filter({ initialBoroughs }: { initialBoroughs: string[] 
                             >
                                 {ntfy.id}
                             </a></b> <Button onClick={handleCopyToClipBoardClick} variant={"outline"}>📋</Button></div>
-                        : <>
-                            <Button onClick={handleAddNtfyClick}>🔔 Push-Notification für diesen Filter erstellen</Button>
-                            <div><Alert variant="destructive" className="mt-2">Gefilterte Push-Notifications funktionieren noch nicht (zuverlässig)</Alert></div>
-                        </>
+                        :<Button onClick={handleAddNtfyClick}>🔔 Push-Notification für diesen Filter erstellen</Button>              
 
                     )}
                 </div>
