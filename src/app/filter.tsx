@@ -29,12 +29,12 @@ export default function Filter({
     const { toast } = useToast();
 
     const [showFilter, setShowFilter] = useState(false);
-    const [selectedBoroughs, setSelectedBoroughs] = useState<boroughMap>(
-        initialBoroughs.reduce((acc, borough) => {
-            acc[borough] = false; // Set the value to false for each borough
-            return acc;
-        }, {} as boroughMap) // Initialize as an empty BoroughMap
-    );
+    // const [selectedBoroughs, setSelectedBoroughs] = useState<boroughMap>(
+    //     initialBoroughs.reduce((acc, borough) => {
+    //         acc[borough] = false; // Set the value to false for each borough
+    //         return acc;
+    //     }, {} as boroughMap) // Initialize as an empty BoroughMap
+    // );
 
     const [maxRent, setMaxRent] = useState(settings.filters.maxRent);
     const [minSize, setMinSize] = useState(settings.filters.minSize);
@@ -44,18 +44,10 @@ export default function Filter({
 
     const [isModalOpen, setIsModalOpen] = useState(false);
 
-    const selectedTrueBoroughs = Object.entries(selectedBoroughs)
-        .filter(([_, isSelected]) => isSelected)
-        .map(([borough]) => borough);
-
     const changedParameters =
         maxRent !== settings.filters.maxRent ||
         minSize !== settings.filters.minSize ||
-        minRooms !== settings.filters.minRooms ||
-        selectedTrueBoroughs.length !== settings.filters.boroughs!.length ||
-        selectedTrueBoroughs.some(
-            borough => !settings.filters.boroughs!.includes(borough)
-        );
+        minRooms !== settings.filters.minRooms;
 
     const allBoroughsChecked =
         !settings.filters.boroughs ||
@@ -126,14 +118,6 @@ export default function Filter({
         minRooms
             ? (settings.filters.minRooms = minRooms)
             : delete settings.filters.minRooms;
-        //empty selected boroughs in settings
-        settings.filters.boroughs = [];
-        //iterate through boroughs and see which ones are selected
-        Object.entries(selectedBoroughs).forEach(([borough, isSelected]) => {
-            if (isSelected) {
-                settings.filters.boroughs!.push(borough);
-            }
-        });
         loadNtfy();
         updateSettings(newSettings);
     };
@@ -231,8 +215,7 @@ export default function Filter({
                                             borough
                                         )}
                                         onClick={() =>
-                                            (selectedBoroughs[borough] =
-                                                !selectedBoroughs[borough])
+                                            handleBoroughClick(borough)
                                         }
                                     />
                                     <Label htmlFor={borough}>{borough}</Label>
@@ -311,9 +294,6 @@ export default function Filter({
                                 type="submit"
                                 onClick={() => {
                                     updateFilters;
-                                    console.log(selectedBoroughs);
-                                    console.log('Pauser wekghikehw');
-                                    console.log(settings.filters.boroughs);
                                 }}
                             >
                                 Filter anwenden
