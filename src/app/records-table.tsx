@@ -19,8 +19,8 @@ import { useState } from 'react';
 import RecordsMap from './records-map';
 
 export default function RecordsTable() {
-    // const { records } = useRecords()
-    const records = mockRecords;
+    const { records } = useRecords();
+    // const records = mockRecords;
     const { data: watchesObject } = useSWR('/api/watch', fetchJson<Watches>);
     const [hoveredRecordId, setHoveredRecordId] = useState<number | null>(null);
 

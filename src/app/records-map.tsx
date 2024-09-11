@@ -48,7 +48,7 @@ export default function RecordsMap({
 }: {
     hoveredRecordId: number | null;
 }) {
-    const records = mockRecords;
+    const { records } = useRecords();
 
     return (
         <MapContainer
