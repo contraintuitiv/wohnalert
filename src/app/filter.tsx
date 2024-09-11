@@ -13,6 +13,7 @@ import { fetchJson } from '../../lib/fetch';
 import { useToast } from '@/components/ui/use-toast';
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
 import TutorialModal from '@/components/ui/tutorialModal';
+import { set } from 'zod';
 
 //make an interface which is a map of boroughs as keys and boolean as values
 
@@ -36,6 +37,7 @@ export default function Filter({
     //     }, {} as boroughMap) // Initialize as an empty BoroughMap
     // );
 
+    const [selectedBoroughs, setSelectedBoroughs] = useState<string[]>([]);
     const [maxRent, setMaxRent] = useState(settings.filters.maxRent);
     const [minSize, setMinSize] = useState(settings.filters.minSize);
     const [minRooms, setMinRooms] = useState(settings.filters.minRooms);
@@ -47,50 +49,58 @@ export default function Filter({
     const changedParameters =
         maxRent !== settings.filters.maxRent ||
         minSize !== settings.filters.minSize ||
-        minRooms !== settings.filters.minRooms;
+        minRooms !== settings.filters.minRooms ||
+        selectedBoroughs.sort() !== settings.filters.boroughs!.sort();
 
     const allBoroughsChecked =
         !settings.filters.boroughs ||
         settings.filters.boroughs.length === initialBoroughs.length ||
         settings.filters.boroughs.length === 0;
 
+    // const handleBoroughClick = (borough: string) => {
+    //     const newSettings = JSON.parse(JSON.stringify(settings)) as Settings;
+    //     if (!newSettings.filters.boroughs) {
+    //         newSettings.filters.boroughs = [borough];
+    //     } else {
+    //         const index = newSettings.filters.boroughs.findIndex(
+    //             item => item === borough
+    //         );
+    //         if (index !== -1) {
+    //             newSettings.filters.boroughs.splice(index, 1);
+    //         } else {
+    //             newSettings.filters.boroughs.push(borough);
+    //         }
+    //     }
+    //     updateSettings(newSettings);
+    // };
     const handleBoroughClick = (borough: string) => {
-        const newSettings = JSON.parse(JSON.stringify(settings)) as Settings;
-        if (!newSettings.filters.boroughs) {
-            newSettings.filters.boroughs = [borough];
+        if (!settings.filters.boroughs?.includes(borough)) {
+            setSelectedBoroughs([...selectedBoroughs, borough]);
         } else {
-            const index = newSettings.filters.boroughs.findIndex(
-                item => item === borough
-            );
-            if (index !== -1) {
-                newSettings.filters.boroughs.splice(index, 1);
-            } else {
-                newSettings.filters.boroughs.push(borough);
-            }
+            setSelectedBoroughs(selectedBoroughs.filter(b => b !== borough));
         }
-        updateSettings(newSettings);
     };
 
-    const handleCopyToClipBoardClick = async (textToCopy?: string) => {
-        if (ntfy?.topic || ntfy?.id) {
-            try {
-                await navigator.clipboard.writeText(
-                    textToCopy || ntfy.topic || ntfy.id
-                );
-                toast({
-                    title: 'In Zwischenablage kopiert',
-                    description:
-                        'Ntfy.sh-Topic wurde in die Zwischenablage kopiert',
-                });
-            } catch {
-                toast({
-                    title: 'Fehler',
-                    description:
-                        'Ntfy.sh-Topic konnte nicht in die Zwischenablage kopiert werden',
-                });
-            }
-        }
-    };
+    // const handleCopyToClipBoardClick = async (textToCopy?: string) => {
+    //     if (ntfy?.topic || ntfy?.id) {
+    //         try {
+    //             await navigator.clipboard.writeText(
+    //                 textToCopy || ntfy.topic || ntfy.id
+    //             );
+    //             toast({
+    //                 title: 'In Zwischenablage kopiert',
+    //                 description:
+    //                     'Ntfy.sh-Topic wurde in die Zwischenablage kopiert',
+    //             });
+    //         } catch {
+    //             toast({
+    //                 title: 'Fehler',
+    //                 description:
+    //                     'Ntfy.sh-Topic konnte nicht in die Zwischenablage kopiert werden',
+    //             });
+    //         }
+    //     }
+    // };
 
     const openTutorialModal = () => {
         setIsModalOpen(true);
@@ -120,7 +130,7 @@ export default function Filter({
             : delete settings.filters.minRooms;
         loadNtfy();
         updateSettings(newSettings);
-        console.log(settings.filters);
+        console.log(settings + 'in updateFilters');
     };
 
     useEffect(() => {
