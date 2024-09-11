@@ -13,12 +13,10 @@ import { fetchJson } from '../../lib/fetch';
 import { useToast } from '@/components/ui/use-toast';
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
 import TutorialModal from '@/components/ui/tutorialModal';
-import { set } from 'zod';
 
-//make an interface which is a map of boroughs as keys and boolean as values
-
-interface boroughMap {
-    [boroughs: string]: boolean;
+// Interface for borough map
+interface BoroughMap {
+    [borough: string]: boolean;
 }
 
 export default function Filter({
@@ -30,88 +28,50 @@ export default function Filter({
     const { toast } = useToast();
 
     const [showFilter, setShowFilter] = useState(false);
-    // const [selectedBoroughs, setSelectedBoroughs] = useState<boroughMap>(
-    //     initialBoroughs.reduce((acc, borough) => {
-    //         acc[borough] = false; // Set the value to false for each borough
-    //         return acc;
-    //     }, {} as boroughMap) // Initialize as an empty BoroughMap
-    // );
-
     const [selectedBoroughs, setSelectedBoroughs] = useState<string[]>([]);
     const [maxRent, setMaxRent] = useState(settings.filters.maxRent);
     const [minSize, setMinSize] = useState(settings.filters.minSize);
     const [minRooms, setMinRooms] = useState(settings.filters.minRooms);
 
     const [ntfy, setNtfy] = useState<Ntfy>();
-
     const [isModalOpen, setIsModalOpen] = useState(false);
-
-    const changedParameters =
-        maxRent !== settings.filters.maxRent ||
-        minSize !== settings.filters.minSize ||
-        minRooms !== settings.filters.minRooms ||
-        settings.filters.boroughs
-            ? selectedBoroughs.sort() !== settings.filters.boroughs!.sort()
-                ? true
-                : false
-            : false;
 
     const allBoroughsChecked =
         !settings.filters.boroughs ||
         settings.filters.boroughs.length === initialBoroughs.length ||
         settings.filters.boroughs.length === 0;
 
-    // const handleBoroughClick = (borough: string) => {
-    //     const newSettings = JSON.parse(JSON.stringify(settings)) as Settings;
-    //     if (!newSettings.filters.boroughs) {
-    //         newSettings.filters.boroughs = [borough];
-    //     } else {
-    //         const index = newSettings.filters.boroughs.findIndex(
-    //             item => item === borough
-    //         );
-    //         if (index !== -1) {
-    //             newSettings.filters.boroughs.splice(index, 1);
-    //         } else {
-    //             newSettings.filters.boroughs.push(borough);
-    //         }
-    //     }
-    //     updateSettings(newSettings);
-    // };
+    // Handle borough checkbox click
     const handleBoroughClick = (borough: string) => {
-        if (!settings.filters.boroughs?.includes(borough)) {
-            setSelectedBoroughs([...selectedBoroughs, borough]);
-        } else {
-            setSelectedBoroughs(selectedBoroughs.filter(b => b !== borough));
-        }
+        setSelectedBoroughs(prev => {
+            if (prev.includes(borough)) {
+                return prev.filter(b => b !== borough);
+            } else {
+                return [...prev, borough];
+            }
+        });
     };
 
-    // const handleCopyToClipBoardClick = async (textToCopy?: string) => {
-    //     if (ntfy?.topic || ntfy?.id) {
-    //         try {
-    //             await navigator.clipboard.writeText(
-    //                 textToCopy || ntfy.topic || ntfy.id
-    //             );
-    //             toast({
-    //                 title: 'In Zwischenablage kopiert',
-    //                 description:
-    //                     'Ntfy.sh-Topic wurde in die Zwischenablage kopiert',
-    //             });
-    //         } catch {
-    //             toast({
-    //                 title: 'Fehler',
-    //                 description:
-    //                     'Ntfy.sh-Topic konnte nicht in die Zwischenablage kopiert werden',
-    //             });
-    //         }
-    //     }
-    // };
+    // Apply filters when the user clicks the button
+    const updateFilters = () => {
+        const newSettings = { ...settings };
 
-    const openTutorialModal = () => {
-        setIsModalOpen(true);
-    };
+        // Update the boroughs in the settings
+        newSettings.filters.boroughs = selectedBoroughs.length
+            ? selectedBoroughs
+            : undefined; // Remove boroughs if none are selected
 
-    const closeTutorialModal = () => {
-        setIsModalOpen(false);
+        maxRent
+            ? (newSettings.filters.maxRent = maxRent)
+            : delete newSettings.filters.maxRent;
+        minSize
+            ? (newSettings.filters.minSize = minSize)
+            : delete newSettings.filters.minSize;
+        minRooms
+            ? (newSettings.filters.minRooms = minRooms)
+            : delete newSettings.filters.minRooms;
+
+        updateSettings(newSettings); // Update settings globally
     };
 
     const loadNtfy = useCallback(async () => {
@@ -121,87 +81,12 @@ export default function Filter({
         setNtfy(currentNtfy);
     }, [settings.filters]);
 
-    const updateFilters = () => {
-        const newSettings = { ...settings };
-        maxRent
-            ? (settings.filters.maxRent = maxRent)
-            : delete settings.filters.maxRent;
-        minSize
-            ? (settings.filters.minSize = minSize)
-            : delete settings.filters.minSize;
-        minRooms
-            ? (settings.filters.minRooms = minRooms)
-            : delete settings.filters.minRooms;
-        loadNtfy();
-        updateSettings(newSettings);
-        console.log(settings + 'in updateFilters');
-    };
-
     useEffect(() => {
         loadNtfy();
     }, [settings.filters, loadNtfy]);
 
-    const handleAddNtfyClick = async () => {
-        const body: Prisma.NtfyCreateInput = {
-            ...settings.filters,
-            boroughs: JSON.stringify(settings.filters.boroughs),
-            landlords: '[]',
-        };
-        await fetch('/api/ntfy', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-            },
-            body: JSON.stringify(body),
-        });
-
-        loadNtfy();
-    };
-
     return (
         <>
-            <div className="mb-3">
-                <Alert>
-                    <AlertTitle>
-                        Alle neuen Angebote per Push bekommen
-                    </AlertTitle>
-                    <AlertDescription>
-                        App{' '}
-                        <a
-                            href="https://f-droid.org/de/packages/io.heckel.ntfy/"
-                            className="underline"
-                            target="_blank"
-                            rel="noreferrer"
-                        >
-                            ntfy.sh
-                        </a>{' '}
-                        runterladen und dieses Topic abonnieren:{' '}
-                        <b>
-                            <a
-                                href={`ntfy://ntfy.freizeitstress.org/wohnalert`}
-                                className="hover:underline"
-                                title="direkt in ntfy.sh-App öffnen"
-                            >
-                                <Button
-                                    className="rounded-md py-2 ml-2"
-                                    size={'sm'}
-                                >
-                                    wohnalert
-                                </Button>
-                            </a>
-                        </b>{' '}
-                        <br /> oder manuell hinzufügen:{' '}
-                        <Button
-                            onClick={() => openTutorialModal()}
-                            variant={'outline'}
-                            className="ml-2"
-                            size={'sm'}
-                        >
-                            ?
-                        </Button>
-                    </AlertDescription>
-                </Alert>
-            </div>
             <h3
                 onClick={() => setShowFilter(!showFilter)}
                 className="cursor-pointer hover:underline"
@@ -226,7 +111,7 @@ export default function Filter({
                                 >
                                     <Checkbox
                                         id={borough}
-                                        checked={settings.filters.boroughs?.includes(
+                                        checked={selectedBoroughs.includes(
                                             borough
                                         )}
                                         onClick={() =>
@@ -241,9 +126,11 @@ export default function Filter({
                                     id="alle"
                                     checked={allBoroughsChecked}
                                     onClick={() => {
-                                        const newSettings = { ...settings };
-                                        delete newSettings.filters.boroughs;
-                                        updateSettings(newSettings);
+                                        setSelectedBoroughs(
+                                            allBoroughsChecked
+                                                ? []
+                                                : initialBoroughs
+                                        );
                                     }}
                                 />
                                 <Label htmlFor="alle">alle</Label>
@@ -304,55 +191,21 @@ export default function Filter({
                                 }}
                             />
                         </div>
-                        {changedParameters && (
-                            <Button
-                                type="submit"
-                                onClick={() => {
-                                    updateFilters;
-                                    console.log(settings);
-                                }}
-                            >
-                                Filter anwenden
-                            </Button>
-                        )}
-                    </div>
-
-                    <div className="mt-1">
-                        <div>
-                            <Alert
-                                variant="destructive"
-                                className="mb-2 mt-2 md:mt-0"
-                            >
-                                Gefilterte Push-Notifications funktionieren noch
-                                nicht (zuverlässig)
-                            </Alert>
-                        </div>
-                        {!changedParameters &&
-                            (ntfy ? (
-                                <div>
-                                    Push-Benachrichtigung (via {ntfy.host}):{' '}
-                                    <b>
-                                        <a
-                                            href={`ntfy://${ntfy.host}/${ntfy.id}`}
-                                            className="hover:underline"
-                                            title="direkt in ntfy.sh-App öffnen"
-                                        >
-                                            <Button variant={'outline'}>
-                                                Abonnieren
-                                            </Button>
-                                        </a>
-                                    </b>{' '}
-                                </div>
-                            ) : (
-                                <Button onClick={handleAddNtfyClick}>
-                                    🔔 Push-Notification für diesen Filter
-                                    erstellen
-                                </Button>
-                            ))}
+                        <Button
+                            type="submit"
+                            onClick={() => {
+                                updateFilters();
+                            }}
+                        >
+                            Filter anwenden
+                        </Button>
                     </div>
                 </div>
             )}
-            <TutorialModal isOpen={isModalOpen} onClose={closeTutorialModal} />
+            <TutorialModal
+                isOpen={isModalOpen}
+                onClose={() => setIsModalOpen(false)}
+            />
         </>
     );
 }
