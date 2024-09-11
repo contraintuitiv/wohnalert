@@ -50,7 +50,11 @@ export default function Filter({
         maxRent !== settings.filters.maxRent ||
         minSize !== settings.filters.minSize ||
         minRooms !== settings.filters.minRooms ||
-        selectedBoroughs.sort() !== settings.filters.boroughs!.sort();
+        settings.filters.boroughs
+            ? selectedBoroughs.sort() !== settings.filters.boroughs!.sort()
+                ? true
+                : false
+            : false;
 
     const allBoroughsChecked =
         !settings.filters.boroughs ||
