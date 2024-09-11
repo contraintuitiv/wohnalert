@@ -16,6 +16,7 @@ import { fetchJson } from '../../lib/fetch';
 import { useRecords } from '@/context/records-context';
 import { useState } from 'react';
 import RecordsMap from './records-map';
+import { mockRecords } from './util/mockRecords';
 
 export default function RecordsTable() {
     const { records } = useRecords();
@@ -36,7 +37,7 @@ export default function RecordsTable() {
             {/* Responsive table for mobile and desktop */}
             <div className="overflow-x-auto">
                 <Table className="min-w-full table-auto text-sm">
-                    <TableCaption className="text-xs sm:text-sm">
+                    <TableCaption className="text-xs hidden sm:table-caption sm:text-sm">
                         Verfügbare Wohnangebote von:{' '}
                         {watches.map(
                             (watch, index) =>
@@ -64,7 +65,7 @@ export default function RecordsTable() {
                             </TableHead>
                         </TableRow>
                     </TableHeader>
-                    <TableBody className="hidden sm:flex-auto">
+                    <TableBody className="hidden sm:table-row-group">
                         {records?.map(record => (
                             <TableRow
                                 key={record.id}
@@ -135,11 +136,11 @@ export default function RecordsTable() {
                 {records?.map(record => (
                     <div
                         key={record.id}
-                        className="mb-4 p-4 border rounded-lg hover:bg-gray-50"
+                        className="mb-4 p-4 border rounded-lg hover:bg-gray-50 text-sm"
                         onMouseEnter={() => setHoveredRecordId(record.id)}
                         onMouseLeave={() => setHoveredRecordId(null)}
                     >
-                        <h3 className="text-lg font-medium">
+                        <h3 className="text-base">
                             <a
                                 className="hover:underline"
                                 href={record.url}
@@ -181,6 +182,13 @@ export default function RecordsTable() {
                         </a>
                     </div>
                 ))}
+                <div className="text-[10px] text-gray-500 text-center">
+                    Verfügbare Wohnangebote von:{' '}
+                    {watches.map(
+                        (watch, index) =>
+                            (index !== 0 ? ', ' : '') + watch.title
+                    )}
+                </div>
             </div>
         </>
     );
