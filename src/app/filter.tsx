@@ -120,6 +120,7 @@ export default function Filter({
             : delete settings.filters.minRooms;
         loadNtfy();
         updateSettings(newSettings);
+        console.log(settings.filters);
     };
 
     useEffect(() => {
@@ -240,7 +241,7 @@ export default function Filter({
                             <Label htmlFor="maxRent">maximale Miete</Label>
                             <Input
                                 type="number"
-                                placeholder="450.33"
+                                placeholder="450"
                                 step="50"
                                 min="0"
                                 value={maxRent}
@@ -258,7 +259,7 @@ export default function Filter({
                             <Label htmlFor="minSize">minimale Größe (m²)</Label>
                             <Input
                                 type="number"
-                                placeholder="50.5"
+                                placeholder="50"
                                 value={minSize}
                                 step="10"
                                 min="0"
@@ -294,6 +295,7 @@ export default function Filter({
                                 type="submit"
                                 onClick={() => {
                                     updateFilters;
+                                    console.log(settings);
                                 }}
                             >
                                 Filter anwenden
