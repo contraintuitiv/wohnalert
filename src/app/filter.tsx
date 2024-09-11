@@ -44,10 +44,18 @@ export default function Filter({
 
     const [isModalOpen, setIsModalOpen] = useState(false);
 
+    const selectedTrueBoroughs = Object.entries(selectedBoroughs)
+        .filter(([_, isSelected]) => isSelected)
+        .map(([borough]) => borough);
+
     const changedParameters =
         maxRent !== settings.filters.maxRent ||
         minSize !== settings.filters.minSize ||
-        minRooms !== settings.filters.minRooms;
+        minRooms !== settings.filters.minRooms ||
+        selectedTrueBoroughs.length !== settings.filters.boroughs!.length ||
+        selectedTrueBoroughs.some(
+            borough => !settings.filters.boroughs!.includes(borough)
+        );
 
     const allBoroughsChecked =
         !settings.filters.boroughs ||
