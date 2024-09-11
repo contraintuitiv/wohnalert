@@ -23,6 +23,9 @@ export default function RecordsTable() {
     // const records = mockRecords;
     const { data: watchesObject } = useSWR('/api/watch', fetchJson<Watches>);
     const [hoveredRecordId, setHoveredRecordId] = useState<number | null>(null);
+    const [backgroundSelected, setBackgroundSelected] = useState<number | null>(
+        null
+    );
 
     const watches: Watch[] = [];
     if (watchesObject) {
@@ -33,9 +36,11 @@ export default function RecordsTable() {
 
     return (
         <>
-            <RecordsMap hoveredRecordId={hoveredRecordId} />
+            <div className="sticky top-0 p-4 left-0 right-0 z-10 bg-white w-screen mb-2">
+                <RecordsMap hoveredRecordId={hoveredRecordId} />
+            </div>
             {/* Responsive table for mobile and desktop */}
-            <div className="overflow-x-auto">
+            <div className="overflow-x-auto px-4">
                 <Table className="min-w-full table-auto text-sm">
                     <TableCaption className="text-xs hidden sm:table-caption sm:text-sm">
                         Verfügbare Wohnangebote von:{' '}
@@ -136,13 +141,19 @@ export default function RecordsTable() {
             </div>
 
             {/* Mobile view (card style) */}
-            <div className="block sm:hidden">
+            <div className="block sm:hidden px-4">
                 {records?.map(record => (
                     <div
                         key={record.id}
-                        className="mb-4 p-4 border rounded-lg hover:bg-gray-50 text-sm"
+                        className={`mb-4 p-4 border rounded-lg hover:bg-gray-100 ${
+                            record.id == backgroundSelected ? 'bg-gray-200' : ''
+                        } text-sm`}
                         onMouseEnter={() => setHoveredRecordId(record.id)}
                         onMouseLeave={() => setHoveredRecordId(null)}
+                        onClick={() => {
+                            setHoveredRecordId(record.id);
+                            setBackgroundSelected(record.id);
+                        }}
                     >
                         <h3 className="text-base">
                             <a
@@ -186,7 +197,7 @@ export default function RecordsTable() {
                         </a>
                     </div>
                 ))}
-                <div className="text-[10px] text-gray-500 text-center">
+                <div className="text-[10px] text-gray-500 text-center mb-4">
                     Verfügbare Wohnangebote von:{' '}
                     {watches.map(
                         (watch, index) =>

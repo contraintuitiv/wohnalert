@@ -14,6 +14,12 @@ import { useToast } from '@/components/ui/use-toast';
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
 import TutorialModal from '@/components/ui/tutorialModal';
 
+//make an interface which is a map of boroughs as keys and boolean as values
+
+interface boroughMap {
+    [boroughs: string]: boolean;
+}
+
 export default function Filter({
     initialBoroughs,
 }: {
@@ -23,6 +29,13 @@ export default function Filter({
     const { toast } = useToast();
 
     const [showFilter, setShowFilter] = useState(false);
+    const [selectedBoroughs, setSelectedBoroughs] = useState<boroughMap>(
+        initialBoroughs.reduce((acc, borough) => {
+            acc[borough] = false; // Set the value to false for each borough
+            return acc;
+        }, {} as boroughMap) // Initialize as an empty BoroughMap
+    );
+
     const [maxRent, setMaxRent] = useState(settings.filters.maxRent);
     const [minSize, setMinSize] = useState(settings.filters.minSize);
     const [minRooms, setMinRooms] = useState(settings.filters.minRooms);
@@ -96,9 +109,23 @@ export default function Filter({
 
     const updateFilters = () => {
         const newSettings = { ...settings };
-        if (maxRent) settings.filters.maxRent = maxRent;
-        if (minSize) settings.filters.minSize = minSize;
-        if (minRooms) settings.filters.minRooms = minRooms;
+        maxRent
+            ? (settings.filters.maxRent = maxRent)
+            : delete settings.filters.maxRent;
+        minSize
+            ? (settings.filters.minSize = minSize)
+            : delete settings.filters.minSize;
+        minRooms
+            ? (settings.filters.minRooms = minRooms)
+            : delete settings.filters.minRooms;
+        //empty selected boroughs in settings
+        settings.filters.boroughs = [];
+        //iterate through boroughs and see which ones are selected
+        Object.entries(selectedBoroughs).forEach(([borough, isSelected]) => {
+            if (isSelected) {
+                settings.filters.boroughs!.push(borough);
+            }
+        });
         loadNtfy();
         updateSettings(newSettings);
     };
@@ -196,7 +223,8 @@ export default function Filter({
                                             borough
                                         )}
                                         onClick={() =>
-                                            handleBoroughClick(borough)
+                                            (selectedBoroughs[borough] =
+                                                !selectedBoroughs[borough])
                                         }
                                     />
                                     <Label htmlFor={borough}>{borough}</Label>
@@ -257,7 +285,7 @@ export default function Filter({
                             <Label htmlFor="minRooms">mind. Zimmer</Label>
                             <Input
                                 type="number"
-                                placeholder="50.5"
+                                placeholder="2"
                                 min="0"
                                 value={minRooms}
                                 onChange={e => {
@@ -271,7 +299,13 @@ export default function Filter({
                             />
                         </div>
                         {changedParameters && (
-                            <Button type="submit" onClick={updateFilters}>
+                            <Button
+                                type="submit"
+                                onClick={() => {
+                                    updateFilters;
+                                    handleBoroughClick;
+                                }}
+                            >
                                 Filter anwenden
                             </Button>
                         )}

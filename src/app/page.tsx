@@ -21,8 +21,8 @@ export default async function Home() {
     return (
         <SettingsProvider>
             <RecordsProvider initialRecords={records}>
-                <main className="p-5">
-                    <div className="mb-5">
+                <main>
+                    <div className="px-4 mt-4 sm:p-6">
                         <Filter initialBoroughs={boroughs} />
                     </div>
                     <div>

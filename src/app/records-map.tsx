@@ -8,7 +8,8 @@ import { useRecords } from '@/context/records-context';
 import { mockRecords } from './util/mockRecords';
 
 const createCustomIcon = (isHovered: boolean) => {
-    const size = isHovered ? 50 : 38;
+    const markerColor = isHovered ? '#3cb371' : '#FF6E6E';
+    const size = isHovered ? 45 : 38;
     const customMarkerSVG = `
 <svg width="30px" height="30px" viewBox="-4 0 36 36" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
     <title>map-marker</title>
@@ -21,12 +22,9 @@ const createCustomIcon = (isHovered: boolean) => {
             <g id="Icons" transform="translate(37.000000, 169.000000)">
                 <g id="map-marker" transform="translate(78.000000, 468.000000)">
                     <g transform="translate(10.000000, 6.000000)">
-                        <path d="M14,0 C21.732,0 28,5.641 28,12.6 C28,23.963 14,36 14,36 C14,36 0,24.064 0,12.6 C0,5.641 6.268,0 14,0 Z" id="Shape" fill="#FF6E6E">
-
-</path>
-                        <circle id="Oval" fill="#0C0058" fill-rule="nonzero" cx="14" cy="14" r="7">
-
-</circle>
+                        <path d="M14,0 C21.732,0 28,5.641 28,12.6 C28,23.963 14,36 14,36 C14,36 0,24.064 0,12.6 C0,5.641 6.268,0 14,0 Z" id="Shape" fill="${markerColor}">
+                        </path>
+                        <circle id="Oval" fill="#0C0058" fill-rule="nonzero" cx="14" cy="14" r="7"></circle>
                     </g>
                 </g>
             </g>
@@ -37,7 +35,7 @@ const createCustomIcon = (isHovered: boolean) => {
     return new L.DivIcon({
         html: customMarkerSVG,
         className: 'text-blue-500', // Optional: Clear any default styles
-        iconSize: [size, size], // Same as the SVG size
+        iconSize: [size, size], // Maintain the original size
         iconAnchor: [size / 2, size], // Bottom center of the icon
         popupAnchor: [0, -size], // Popup should open just above the icon
     });
