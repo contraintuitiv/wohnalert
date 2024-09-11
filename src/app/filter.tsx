@@ -14,7 +14,6 @@ import { useToast } from '@/components/ui/use-toast';
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
 import TutorialModal from '@/components/ui/tutorialModal';
 
-// Interface for borough map
 interface BoroughMap {
     [borough: string]: boolean;
 }
@@ -28,11 +27,12 @@ export default function Filter({
     const { toast } = useToast();
 
     const [showFilter, setShowFilter] = useState(false);
-    const [selectedBoroughs, setSelectedBoroughs] = useState<string[]>([]);
+    const [selectedBoroughs, setSelectedBoroughs] = useState<string[]>(
+        settings.filters.boroughs || []
+    );
     const [maxRent, setMaxRent] = useState(settings.filters.maxRent);
     const [minSize, setMinSize] = useState(settings.filters.minSize);
     const [minRooms, setMinRooms] = useState(settings.filters.minRooms);
-
     const [ntfy, setNtfy] = useState<Ntfy>();
     const [isModalOpen, setIsModalOpen] = useState(false);
 
@@ -51,6 +51,14 @@ export default function Filter({
             }
         });
     };
+
+    // Check if any of the parameters have changed
+    const changedParameters =
+        maxRent !== settings.filters.maxRent ||
+        minSize !== settings.filters.minSize ||
+        minRooms !== settings.filters.minRooms ||
+        selectedBoroughs.sort().toString() !==
+            settings.filters.boroughs?.sort().toString();
 
     // Apply filters when the user clicks the button
     const updateFilters = () => {
@@ -85,8 +93,67 @@ export default function Filter({
         loadNtfy();
     }, [settings.filters, loadNtfy]);
 
+    const handleAddNtfyClick = async () => {
+        const body: Prisma.NtfyCreateInput = {
+            ...settings.filters,
+            boroughs: JSON.stringify(settings.filters.boroughs),
+            landlords: '[]',
+        };
+        await fetch('/api/ntfy', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify(body),
+        });
+
+        loadNtfy();
+    };
+
     return (
         <>
+            <div className="mb-3">
+                <Alert>
+                    <AlertTitle>
+                        Alle neuen Angebote per Push bekommen
+                    </AlertTitle>
+                    <AlertDescription>
+                        App{' '}
+                        <a
+                            href="https://f-droid.org/de/packages/io.heckel.ntfy/"
+                            className="underline"
+                            target="_blank"
+                            rel="noreferrer"
+                        >
+                            ntfy.sh
+                        </a>{' '}
+                        runterladen und dieses Topic abonnieren:{' '}
+                        <b>
+                            <a
+                                href={`ntfy://ntfy.freizeitstress.org/wohnalert`}
+                                className="hover:underline"
+                                title="direkt in ntfy.sh-App öffnen"
+                            >
+                                <Button
+                                    className="rounded-md py-2 ml-2"
+                                    size={'sm'}
+                                >
+                                    wohnalert
+                                </Button>
+                            </a>
+                        </b>{' '}
+                        <br /> oder manuell hinzufügen:{' '}
+                        <Button
+                            onClick={() => setIsModalOpen(true)}
+                            variant={'outline'}
+                            className="ml-2"
+                            size={'sm'}
+                        >
+                            ?
+                        </Button>
+                    </AlertDescription>
+                </Alert>
+            </div>
             <h3
                 onClick={() => setShowFilter(!showFilter)}
                 className="cursor-pointer hover:underline"
@@ -191,14 +258,51 @@ export default function Filter({
                                 }}
                             />
                         </div>
-                        <Button
-                            type="submit"
-                            onClick={() => {
-                                updateFilters();
-                            }}
-                        >
-                            Filter anwenden
-                        </Button>
+                        {/* Show button only if parameters have changed */}
+                        {changedParameters && (
+                            <Button
+                                type="submit"
+                                onClick={() => {
+                                    updateFilters();
+                                }}
+                            >
+                                Filter anwenden
+                            </Button>
+                        )}
+                    </div>
+
+                    <div className="mt-1">
+                        <div>
+                            <Alert
+                                variant="destructive"
+                                className="mb-2 mt-2 md:mt-0"
+                            >
+                                Gefilterte Push-Notifications funktionieren noch
+                                nicht (zuverlässig)
+                            </Alert>
+                        </div>
+                        {!changedParameters &&
+                            (ntfy ? (
+                                <div>
+                                    Push-Benachrichtigung (via {ntfy.host}):{' '}
+                                    <b>
+                                        <a
+                                            href={`ntfy://${ntfy.host}/${ntfy.id}`}
+                                            className="hover:underline"
+                                            title="direkt in ntfy.sh-App öffnen"
+                                        >
+                                            <Button variant={'outline'}>
+                                                Abonnieren
+                                            </Button>
+                                        </a>
+                                    </b>{' '}
+                                </div>
+                            ) : (
+                                <Button onClick={handleAddNtfyClick}>
+                                    🔔 Push-Notification für diesen Filter
+                                    erstellen
+                                </Button>
+                            ))}
                     </div>
                 </div>
             )}
