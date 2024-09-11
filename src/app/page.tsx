@@ -1,7 +1,7 @@
 import { RecordsProvider } from '@/context/records-context';
 import { prisma } from '../../lib/prisma';
 import RecordsMap from './records-map';
-import RecordsTable from './records-table-old';
+import RecordsTable from './records-table';
 import { SettingsProvider } from '@/context/settings-context';
 import Filter from './filter';
 export default async function Home() {

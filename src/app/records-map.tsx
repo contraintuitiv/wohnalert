@@ -5,7 +5,6 @@ import 'leaflet/dist/leaflet.css';
 import L from 'leaflet';
 import { Record } from '@prisma/client';
 import { useRecords } from '@/context/records-context';
-import { mockRecords } from './util/mockRecords';
 
 const createCustomIcon = (isHovered: boolean) => {
     const size = isHovered ? 45 : 38;
@@ -87,7 +86,7 @@ export default function RecordsMap({
                             {record.road} {record.house_number}
                             <br />
                             <br />
-                            {/* {JSON.parse(record.properties).join(', ')} */}
+                            {JSON.parse(record.properties).join(', ')}
                         </Popup>
                     </Marker>
                 ))}

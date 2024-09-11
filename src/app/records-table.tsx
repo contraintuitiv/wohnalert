@@ -14,7 +14,6 @@ import { Watch, Watches } from './api/watch/route';
 import useSWR from 'swr';
 import { fetchJson } from '../../lib/fetch';
 import { useRecords } from '@/context/records-context';
-import { mockRecords } from './util/mockRecords';
 import { useState } from 'react';
 import RecordsMap from './records-map';
 
@@ -33,6 +32,7 @@ export default function RecordsTable() {
 
     return (
         <>
+            <RecordsMap hoveredRecordId={hoveredRecordId} />
             {/* Responsive table for mobile and desktop */}
             <div className="overflow-x-auto">
                 <Table className="min-w-full table-auto text-sm">
@@ -129,7 +129,6 @@ export default function RecordsTable() {
                     </TableBody>
                 </Table>
             </div>
-            <RecordsMap hoveredRecordId={hoveredRecordId} />
 
             {/* Mobile view (card style) */}
             <div className="block sm:hidden">
