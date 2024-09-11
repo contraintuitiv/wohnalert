@@ -297,17 +297,11 @@ export default function Filter({
                                             className="hover:underline"
                                             title="direkt in ntfy.sh-App öffnen"
                                         >
-                                            {ntfy.id}
+                                            <Button variant={'outline'}>
+                                                Abonnieren
+                                            </Button>
                                         </a>
                                     </b>{' '}
-                                    <Button
-                                        onClick={() =>
-                                            handleCopyToClipBoardClick()
-                                        }
-                                        variant={'outline'}
-                                    >
-                                        📋
-                                    </Button>
                                 </div>
                             ) : (
                                 <Button onClick={handleAddNtfyClick}>

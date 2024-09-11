@@ -49,8 +49,12 @@ export default function RecordsTable() {
                             <TableHead className="hidden sm:table-cell">
                                 Vermieter*in
                             </TableHead>
-                            <TableHead>Titel</TableHead>
-                            <TableHead>Bezirk</TableHead>
+                            <TableHead className="hidden sm:table-cell">
+                                Titel
+                            </TableHead>
+                            <TableHead className="hidden sm:table-cell">
+                                Bezirk
+                            </TableHead>
                             <TableHead className="hidden sm:table-cell">
                                 Warmmiete
                             </TableHead>

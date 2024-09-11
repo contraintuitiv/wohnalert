@@ -8,7 +8,7 @@ import { useRecords } from '@/context/records-context';
 import { mockRecords } from './util/mockRecords';
 
 const createCustomIcon = (isHovered: boolean) => {
-    const size = isHovered ? 45 : 38;
+    const size = isHovered ? 50 : 38;
     const customMarkerSVG = `
 <svg width="30px" height="30px" viewBox="-4 0 36 36" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
     <title>map-marker</title>
