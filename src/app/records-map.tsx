@@ -1,13 +1,15 @@
-"use client"
+'use client';
 
-import { MapContainer, TileLayer, Marker, Popup } from 'react-leaflet'
+import { MapContainer, TileLayer, Marker, Popup } from 'react-leaflet';
 import 'leaflet/dist/leaflet.css';
-import L from 'leaflet'
-import { Record } from "@prisma/client"
+import L from 'leaflet';
+import { Record } from '@prisma/client';
 import { useRecords } from '@/context/records-context';
+import { mockRecords } from './util/mockRecords';
 
-
-const customMarkerSVG = `
+const createCustomIcon = (isHovered: boolean) => {
+    const size = isHovered ? 45 : 38;
+    const customMarkerSVG = `
 <svg width="30px" height="30px" viewBox="-4 0 36 36" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
     <title>map-marker</title>
     <desc></desc>
@@ -32,34 +34,63 @@ const customMarkerSVG = `
     </g>
 </svg>
 `;
-const customIcon = new L.DivIcon({
-    html: customMarkerSVG,
-    className: '', // Optional: Clear any default styles
-    iconSize: [38, 38], // Same as the SVG size
-    iconAnchor: [19, 38], // Bottom center of the icon
-    popupAnchor: [0, -38], // Popup should open just above the icon
-});
+    return new L.DivIcon({
+        html: customMarkerSVG,
+        className: 'text-blue-500', // Optional: Clear any default styles
+        iconSize: [size, size], // Same as the SVG size
+        iconAnchor: [size / 2, size], // Bottom center of the icon
+        popupAnchor: [0, -size], // Popup should open just above the icon
+    });
+};
 
-export default function RecordsMap() {
-    const { records } = useRecords()
+export default function RecordsMap({
+    hoveredRecordId,
+}: {
+    hoveredRecordId: number | null;
+}) {
+    const records = mockRecords;
 
-    return <MapContainer center={[52.5100, 13.3992]} zoom={11} scrollWheelZoom={false} className='w-full h-[400px] sm:h-[500px] md:h-[600px]'>
-        <TileLayer
-            attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
-            url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
-        />
-        {records && records.map(record => <Marker position={[record.lat, record.long]} icon={customIcon} key={record.id}>
-
-            <Popup>
-                <a href={record.url} target='_blank' rel="noreferrer"><b>[{record.landlord}]  {record.description}</b> <i>{record.wbs ? "WBS" : ""}</i></a><br /><br />
-
-                {record.rent}€ | {record.rooms} Zimmer | {record.size}m²<br />
-                {record.road} {record.house_number}<br /><br />
-
-                {JSON.parse(record.properties).join(", ")}
-            </Popup>
-        </Marker>)}
-
-    </MapContainer>
-
+    return (
+        <MapContainer
+            center={[52.51, 13.3992]}
+            zoom={11}
+            scrollWheelZoom={false}
+            className="w-full h-[400px] sm:h-[500px] md:h-[600px] z-0"
+        >
+            <TileLayer
+                attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+                url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
+            />
+            {records &&
+                records.map(record => (
+                    <Marker
+                        position={[record.lat, record.long]}
+                        icon={createCustomIcon(record.id === hoveredRecordId)}
+                        key={record.id}
+                    >
+                        <Popup>
+                            <a
+                                href={record.url}
+                                target="_blank"
+                                rel="noreferrer"
+                            >
+                                <b>
+                                    [{record.landlord}] {record.description}
+                                </b>{' '}
+                                <i>{record.wbs ? 'WBS' : ''}</i>
+                            </a>
+                            <br />
+                            <br />
+                            {record.rent}€ | {record.rooms} Zimmer |{' '}
+                            {record.size}m²
+                            <br />
+                            {record.road} {record.house_number}
+                            <br />
+                            <br />
+                            {/* {JSON.parse(record.properties).join(', ')} */}
+                        </Popup>
+                    </Marker>
+                ))}
+        </MapContainer>
+    );
 }

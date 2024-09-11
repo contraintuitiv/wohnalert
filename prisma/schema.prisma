@@ -32,12 +32,13 @@ model Record {
   rent          Float
   wbs           Boolean
   properties    String
+  hover         Boolean
 }
 
 model Ntfy {
   id        String   @id @default(uuid())
   createdAt DateTime @default(now())
-  host      String   @default("ntfy.sh")
+  host      String   @default("ntfy.freizeitstress.org")
   topic     String?
   minRent   Float?    @default(1)
   maxRent   Float?    @default(99999999999)
