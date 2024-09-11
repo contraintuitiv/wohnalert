@@ -303,7 +303,9 @@ export default function Filter({
                                 type="submit"
                                 onClick={() => {
                                     updateFilters;
-                                    handleBoroughClick;
+                                    console.log(selectedBoroughs);
+                                    console.log('Pauser wekghikehw');
+                                    console.log(settings.filters.boroughs);
                                 }}
                             >
                                 Filter anwenden
