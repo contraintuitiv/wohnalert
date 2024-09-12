@@ -236,7 +236,7 @@ export default function Filter({
 
     return (
         <>
-            <div className="mb-3">
+            <div className="mb-3 mt-2">
                 <Alert>
                     <AlertTitle>
                         Alle neuen Angebote per Push bekommen
@@ -400,7 +400,6 @@ export default function Filter({
                         {/* Show button only if parameters have changed */}
                         {changedParameters && (
                             <Button
-                                type="submit"
                                 onClick={() => {
                                     updateFilters();
                                 }}
