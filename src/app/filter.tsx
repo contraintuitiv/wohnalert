@@ -128,12 +128,13 @@ export default function Filter({
                 📋
             </Button>
         </div>,
-        <div key="step-5">
-            Step 5: Open Ntfy App and enter copied ID as Topic and
-            https://ntfy.freizeitstress.org as server
-        </div>,
+        <div key="step-5">Step 5: Open Ntfy App and add new Topic</div>,
         <div key="step-6">
-            Step 6: Get Custom Notifications only when new Appartments match
+            Step 6: Enter copied ID as Topic and https://ntfy.freizeitstress.org
+            as server
+        </div>,
+        <div key="step-7">
+            Step 7: Get Custom Notifications only when new Appartments match
             your filter
         </div>,
     ];
@@ -459,6 +460,7 @@ export default function Filter({
                                             }
                                             variant={'outline'}
                                             size={'sm'}
+                                            className="ml-2"
                                         >
                                             Hilfe?
                                         </Button>
