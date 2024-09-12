@@ -133,12 +133,13 @@ export default function RecordsTable() {
                                         record.neighbourhood}{' '}
                                     &#128712;{' '}
                                     <a
-                                        onClick={() =>
+                                        onClick={() => {
                                             handleCenterMap(
                                                 record.lat,
                                                 record.long
-                                            )
-                                        }
+                                            );
+                                            setHoveredRecordId(record.id);
+                                        }}
                                         className="text-blue-500 hover:underline cursor-pointer"
                                     >
                                         &#128205; Zur Karte
@@ -197,10 +198,11 @@ export default function RecordsTable() {
                             {record.size} m² | {record.rooms} Zimmer |
                             {new Date(record.createdAt).toLocaleDateString()} |
                             <a
-                                href={osmLink(record.lat, record.long)}
-                                className="text-blue-500 hover:underline"
-                                target="_blank"
-                                rel="noreferrer"
+                                onClick={() => {
+                                    handleCenterMap(record.lat, record.long);
+                                    setHoveredRecordId(record.id);
+                                }}
+                                className="text-blue-500 hover:underline cursor-pointer"
                             >
                                 &#128205; Zur Karte
                             </a>
