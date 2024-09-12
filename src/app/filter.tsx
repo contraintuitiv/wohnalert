@@ -37,6 +37,17 @@ export default function Filter({
     const [isModalOpen, setIsModalOpen] = useState(false);
     const [isFilterModalOpen, setIsFilterModalOpen] = useState(false);
 
+    useEffect(() => {
+        const storedShowFilter = localStorage.getItem('showFilter');
+        if (storedShowFilter !== null) {
+            setShowFilter(JSON.parse(storedShowFilter));
+        }
+    }, []);
+
+    useEffect(() => {
+        localStorage.setItem('showFilter', JSON.stringify(showFilter));
+    }, [showFilter]);
+
     const allBoroughsChecked =
         !settings.filters.boroughs ||
         settings.filters.boroughs.length === initialBoroughs.length ||
