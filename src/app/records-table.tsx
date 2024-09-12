@@ -14,7 +14,7 @@ import { Watch, Watches } from './api/watch/route';
 import useSWR from 'swr';
 import { fetchJson } from '../../lib/fetch';
 import { useRecords } from '@/context/records-context';
-import { useState } from 'react';
+import { useRef, useState } from 'react';
 import RecordsMap from './records-map';
 import { mockRecords } from './util/mockRecords';
 
@@ -26,6 +26,21 @@ export default function RecordsTable() {
     const [backgroundSelected, setBackgroundSelected] = useState<number | null>(
         null
     );
+    const [centerCoords, setCenterCoords] = useState<[number, number] | null>(
+        null
+    );
+
+    const mapRef = useRef<HTMLDivElement>(null);
+
+    const handleCenterMap = (lat: number, long: number) => {
+        // Scroll the page to the map container
+        if (mapRef.current) {
+            mapRef.current.scrollIntoView({ behavior: 'smooth' });
+        }
+
+        // Set the coordinates to center the map
+        setCenterCoords([lat, long]);
+    };
 
     const watches: Watch[] = [];
     if (watchesObject) {
@@ -36,8 +51,14 @@ export default function RecordsTable() {
 
     return (
         <>
-            <div className="sticky top-0 p-4 left-0 right-0 z-10 bg-white w-full overflow-hidden max-h-[50vh] mb-2">
-                <RecordsMap hoveredRecordId={hoveredRecordId} />
+            <div
+                ref={mapRef}
+                className="sticky top-0 p-4 left-0 right-0 z-10 bg-white w-full overflow-hidden max-h-[50vh] mb-2"
+            >
+                <RecordsMap
+                    hoveredRecordId={hoveredRecordId}
+                    centerCoords={centerCoords}
+                />
             </div>
             {/* Responsive table for mobile and desktop */}
             <div className="overflow-x-auto px-4">
@@ -112,12 +133,15 @@ export default function RecordsTable() {
                                         record.neighbourhood}{' '}
                                     &#128712;{' '}
                                     <a
-                                        href={osmLink(record.lat, record.long)}
-                                        title="zur Karte"
-                                        target="_blank"
-                                        rel="noreferrer"
+                                        onClick={() =>
+                                            handleCenterMap(
+                                                record.lat,
+                                                record.long
+                                            )
+                                        }
+                                        className="text-blue-500 hover:underline cursor-pointer"
                                     >
-                                        &#128205;
+                                        &#128205; Zur Karte
                                     </a>
                                 </TableCell>
                                 <TableCell className="hidden sm:table-cell">

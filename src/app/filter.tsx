@@ -69,13 +69,13 @@ export default function Filter({
                         toast({
                             title: 'In Zwischenablage kopiert',
                             description:
-                                'Ntfy.sh-Topic wurde in die Zwischenablage kopiert',
+                                'https://ntfy.freizeitstress.org wurde in die Zwischenablage kopiert',
                         });
                     } catch {
                         toast({
                             title: 'Fehler',
                             description:
-                                'Ntfy.sh-Topic konnte nicht in die Zwischenablage kopiert werden',
+                                'https://ntfy.freizeitstress.org konnte nicht in die Zwischenablage kopiert werden',
                         });
                     }
                 }}
@@ -113,14 +113,14 @@ export default function Filter({
                             toast({
                                 title: 'In Zwischenablage kopiert',
                                 description:
-                                    'Ntfy.sh-Topic wurde in die Zwischenablage kopiert',
+                                    'Ntfy Topic ID wurde in die Zwischenablage kopiert',
                             });
                         }
                     } catch {
                         toast({
                             title: 'Fehler',
                             description:
-                                'Ntfy.sh-Topic konnte nicht in die Zwischenablage kopiert werden',
+                                'Ntfy Topic ID konnte nicht in die Zwischenablage kopiert werden',
                         });
                     }
                 }}
@@ -293,7 +293,7 @@ export default function Filter({
                             : ''}
                     </span>
                 </h3>
-                <div>
+                <div className="mb-2">
                     <Button
                         onClick={() => setIsFilterModalOpen(true)}
                         variant={'outline'}
@@ -452,6 +452,7 @@ export default function Filter({
                                         </Button>
                                     </div>
                                     <div>
+                                        Du brauchst
                                         <Button
                                             onClick={() =>
                                                 setIsFilterModalOpen(true)
@@ -459,7 +460,7 @@ export default function Filter({
                                             variant={'outline'}
                                             size={'sm'}
                                         >
-                                            ?
+                                            Hilfe?
                                         </Button>
                                     </div>
                                 </div>

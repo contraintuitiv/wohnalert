@@ -1,6 +1,6 @@
 'use client';
 
-import { MapContainer, TileLayer, Marker, Popup } from 'react-leaflet';
+import { MapContainer, TileLayer, Marker, Popup, useMap } from 'react-leaflet';
 import 'leaflet/dist/leaflet.css';
 import L from 'leaflet';
 import { Record } from '@prisma/client';
@@ -41,10 +41,22 @@ const createCustomIcon = (isHovered: boolean) => {
     });
 };
 
+function MapController({ center }: { center: [number, number] }) {
+    const map = useMap(); // Get access to the map object
+
+    if (center) {
+        map.setView(center, 13); // Set the new view at zoom level 13
+    }
+
+    return null; // This component does not render anything
+}
+
 export default function RecordsMap({
     hoveredRecordId,
+    centerCoords,
 }: {
     hoveredRecordId: number | null;
+    centerCoords: [number, number] | null;
 }) {
     const { records } = useRecords();
     // const records = mockRecords;
@@ -60,6 +72,7 @@ export default function RecordsMap({
                 attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
                 url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
             />
+            {centerCoords && <MapController center={centerCoords} />}
             {records &&
                 records.map(record => (
                     <Marker
