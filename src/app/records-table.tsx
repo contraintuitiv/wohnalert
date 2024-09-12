@@ -19,8 +19,8 @@ import RecordsMap from './records-map';
 import { mockRecords } from './util/mockRecords';
 
 export default function RecordsTable() {
-    const { records } = useRecords();
-    // const records = mockRecords;
+    // const { records } = useRecords();
+    const records = mockRecords;
     const { data: watchesObject } = useSWR('/api/watch', fetchJson<Watches>);
     const [hoveredRecordId, setHoveredRecordId] = useState<number | null>(null);
     const [backgroundSelected, setBackgroundSelected] = useState<number | null>(
@@ -36,7 +36,7 @@ export default function RecordsTable() {
 
     return (
         <>
-            <div className="sticky top-0 p-4 left-0 right-0 z-10 bg-white w-screen mb-2">
+            <div className="sticky top-0 p-4 left-0 right-0 z-10 bg-white w-full overflow-hidden max-h-[50vh] mb-2">
                 <RecordsMap hoveredRecordId={hoveredRecordId} />
             </div>
             {/* Responsive table for mobile and desktop */}
@@ -166,35 +166,21 @@ export default function RecordsTable() {
                             </a>
                         </h3>
                         <p>
-                            <strong>Bezirk: </strong>
                             {record.borough ||
                                 record.suburb ||
-                                record.neighbourhood}
+                                record.neighbourhood}{' '}
+                            | {record.landlord} | {record.rent} € | 
+                            {record.size} m² | {record.rooms} Zimmer |
+                            {new Date(record.createdAt).toLocaleDateString()} |
+                            <a
+                                href={osmLink(record.lat, record.long)}
+                                className="text-blue-500 hover:underline"
+                                target="_blank"
+                                rel="noreferrer"
+                            >
+                                &#128205; Zur Karte
+                            </a>
                         </p>
-                        <p>
-                            <strong>Vermieter*in: </strong> {record.landlord}
-                        </p>
-                        <p>
-                            <strong>Warmmiete: </strong> {record.rent} €
-                        </p>
-                        <p>
-                            <strong>Größe: </strong> {record.size} m²
-                        </p>
-                        <p>
-                            <strong>Zimmer: </strong> {record.rooms}
-                        </p>
-                        <p>
-                            <strong>Hinzugefügt: </strong>{' '}
-                            {new Date(record.createdAt).toLocaleDateString()}
-                        </p>
-                        <a
-                            href={osmLink(record.lat, record.long)}
-                            className="text-blue-500 hover:underline"
-                            target="_blank"
-                            rel="noreferrer"
-                        >
-                            &#128205; Zur Karte
-                        </a>
                     </div>
                 ))}
                 <div className="text-[10px] text-gray-500 text-center mb-4">

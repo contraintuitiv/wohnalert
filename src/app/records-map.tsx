@@ -46,15 +46,15 @@ export default function RecordsMap({
 }: {
     hoveredRecordId: number | null;
 }) {
-    const { records } = useRecords();
-    // const records = mockRecords;
+    // const { records } = useRecords();
+    const records = mockRecords;
 
     return (
         <MapContainer
             center={[52.51, 13.3992]}
             zoom={11}
             scrollWheelZoom={false}
-            className="w-full h-[400px] sm:h-[500px] md:h-[600px] z-0"
+            className="w-full h-[400px] sm:h-[500px] md:h-[600px] max-h-[50vh] z-0"
         >
             <TileLayer
                 attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
@@ -86,7 +86,7 @@ export default function RecordsMap({
                             {record.road} {record.house_number}
                             <br />
                             <br />
-                            {JSON.parse(record.properties).join(', ')}
+                            {/* {JSON.parse(record.properties).join(', ')} */}
                         </Popup>
                     </Marker>
                 ))}

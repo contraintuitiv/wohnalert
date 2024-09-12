@@ -1,32 +1,26 @@
 import Image from 'next/image';
 import { useState } from 'react';
 import { Button } from './button';
+import { toast } from './use-toast';
 
+interface TutorialModalProps {
+    isOpen: boolean;
+    onClose: () => void;
+    steps: JSX.Element[];
+    images: string[];
+    title: string;
+}
 export default function TutorialModal({
     isOpen,
     onClose,
-}: {
-    isOpen: boolean;
-    onClose: () => void;
-}) {
-    const tutorialImages = [
-        '/tutorial_1.jpg', // Replace with your image paths
-        '/tutorial_2.jpg',
-        '/tutorial_3.jpg',
-        '/tutorial_4.jpg',
-    ];
-
-    const steps = [
-        'Step 1: Add new Topic',
-        'Step 2: Enter "wohnalert" as topic and "https://ntfy.freizeitstress.org" as server',
-        'Step 3: Get notified about new apartments',
-        '(Optional) Change Settings for Notifications',
-    ];
-
+    steps,
+    images,
+    title,
+}: TutorialModalProps) {
     const [currentStep, setCurrentStep] = useState(0);
 
     const nextStep = () => {
-        if (currentStep < tutorialImages.length - 1) {
+        if (currentStep < images.length - 1) {
             setCurrentStep(currentStep + 1);
         }
     };
@@ -44,7 +38,7 @@ export default function TutorialModal({
             <div className="bg-white p-6 w-full max-w-md max-h-screen flex flex-col justify-between">
                 {/* Modal Header */}
                 <div className="flex justify-between items-center mb-4">
-                    <h2 className="text-xl font-bold">How to Use Ntfy</h2>
+                    <h2 className="text-xl font-bold">{title}</h2>
                     <button
                         onClick={onClose}
                         className="text-gray-500 hover:text-gray-700"
@@ -57,7 +51,7 @@ export default function TutorialModal({
                 <div className="flex flex-col items-center flex-grow">
                     <div className="relative w-full" style={{ height: '60vh' }}>
                         <Image
-                            src={tutorialImages[currentStep]}
+                            src={images[currentStep]}
                             alt={`Step ${currentStep + 1}`}
                             layout="fill"
                             objectFit="contain"
@@ -84,9 +78,9 @@ export default function TutorialModal({
                         </Button>
                         <Button
                             onClick={nextStep}
-                            disabled={currentStep === tutorialImages.length - 1}
+                            disabled={currentStep === images.length - 1}
                             className={`px-4 py-2 rounded-md text-sm ${
-                                currentStep === tutorialImages.length - 1
+                                currentStep === images.length - 1
                                     ? 'bg-gray-300'
                                     : 'bg-blue-500 text-white'
                             }`}
