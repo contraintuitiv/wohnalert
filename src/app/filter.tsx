@@ -258,17 +258,15 @@ export default function Filter({
                         >
                             Android
                         </a>{' '}
-                        oder
-                        <a>
+                        oder{' '}
                             <a
                                 href="https://apps.apple.com/de/app/ntfy/id1625396347"
                                 className="underline"
                                 target="_blank"
                                 rel="noreferrer"
                             >
-                                Iphone
-                            </a>
-                        </a>
+                                Iphone 
+                            </a>{' '}
                         runterladen und Topic abonnieren:{' '}
                         <b>
                             <a
