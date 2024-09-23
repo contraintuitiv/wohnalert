@@ -32,7 +32,6 @@ model Record {
   rent          Float
   wbs           Boolean
   properties    String
-  hover         Boolean
 }
 
 model Ntfy {
