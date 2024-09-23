@@ -367,7 +367,7 @@ function parseDegewo(data: string[], extractedRecords: ExtractedRecord[]) {
     return extractedRecords;
 }
 
-function parseStadtUndLand(
+function parseStadt_Und_Land(
     data: string[],
     extractedRecords: ExtractedRecord[]
 ) {
@@ -483,8 +483,8 @@ export async function POST(req: NextRequest) {
     if (watchTitle.toLowerCase().startsWith('degewo')) {
         extractedRecords = parseDegewo(data, extractedRecords);
     }
-    if (watchTitle.toLowerCase().startsWith('stadtundland')) {
-        extractedRecords = parseStadtUndLand(data, extractedRecords);
+    if (watchTitle.toLowerCase().startsWith('stadt_und_land')) {
+        extractedRecords = parseStadt_Und_Land(data, extractedRecords);
     }
 
     for (const record of extractedRecords) {

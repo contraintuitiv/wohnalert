@@ -14,10 +14,6 @@ import { useToast } from '@/components/ui/use-toast';
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
 import TutorialModal from '@/components/ui/tutorialModal';
 
-interface BoroughMap {
-    [borough: string]: boolean;
-}
-
 export default function Filter({
     initialBoroughs,
 }: {
@@ -253,17 +249,27 @@ export default function Filter({
                         Alle neuen Angebote per Push bekommen
                     </AlertTitle>
                     <AlertDescription>
-                        App{' '}
+                        App Ntfy für{' '}
                         <a
                             href="https://f-droid.org/de/packages/io.heckel.ntfy/"
                             className="underline"
                             target="_blank"
                             rel="noreferrer"
                         >
-                            ntfy.sh
+                            Android
                         </a>{' '}
-                        (nur Android, sonst App Store) runterladen und Topic
-                        abonnieren:{' '}
+                        oder
+                        <a>
+                            <a
+                                href="https://apps.apple.com/de/app/ntfy/id1625396347"
+                                className="underline"
+                                target="_blank"
+                                rel="noreferrer"
+                            >
+                                Iphone
+                            </a>
+                        </a>
+                        runterladen und Topic abonnieren:{' '}
                         <b>
                             <a
                                 href={`ntfy://ntfy.freizeitstress.org/wohnalert`}
@@ -477,7 +483,10 @@ export default function Filter({
                                     </div>
                                 </div>
                             ) : (
-                                <Button onClick={handleAddNtfyClick}>
+                                <Button
+                                    className="px-2"
+                                    onClick={handleAddNtfyClick}
+                                >
                                     🔔 Push-Notification für diesen Filter
                                     erstellen
                                 </Button>
