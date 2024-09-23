@@ -70,4 +70,5 @@ jobs:
                     printf "%s" "${{ secrets.ENV }}" > .env
                     cat .env
                     docker run -d --env-file .env -p ${{vars.DOCKER_PORT || 4541}}:4541 --name ${{ vars.DOCKER_IMAGE_NAME || github.repository}} ghcr.io/${{ secrets.REGISTRY_USERNAME || github.actor }}/${{ vars.REGISTRY_FOLDER || github.repository }}/${{ vars.DOCKER_IMAGE_NAME || github.repository }}:latest
+                    docker exec -it ${{ vars.DOCKER_IMAGE_NAME || github.repository}} npx prisma migrate deploy
                   EOF
