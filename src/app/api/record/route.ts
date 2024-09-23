@@ -405,14 +405,17 @@ function parseStadt_Und_Land(
                 }
 
                 if (!part.includes('Zimmer') && !part.includes('m²')) {
-                    if (part.includes('kein WBS' || 'ohne WBS')) {
+                    if (
+                        part.includes('kein WBS') ||
+                        part.includes('ohne WBS')
+                    ) {
                         setProperty('wbs', 'false', extractedRecords);
                         return;
                     }
                     if (
-                        part.includes(
-                            'mit WBS' || 'WBS erforderlich' || 'WBS erwünscht'
-                        )
+                        part.includes('mit WBS') ||
+                        part.includes('WBS erforderlich') ||
+                        part.includes('WBS erwünscht')
                     ) {
                         setProperty('wbs', 'true', extractedRecords);
                         return;
