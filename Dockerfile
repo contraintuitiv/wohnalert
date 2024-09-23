@@ -51,7 +51,7 @@ RUN addgroup --system --gid 1001 nodejs
 RUN adduser --system --uid 1001 nextjs
 
 COPY --from=builder /app/public ./public
-COPY --from=builder --chown=nextjs:nodejs /app/prisma/records.db ./prisma/records.db
+RUN mkdir -p prisma && chown nextjs:nodejs prisma
 
 # Set the correct permission for prerender cache
 RUN mkdir .next
