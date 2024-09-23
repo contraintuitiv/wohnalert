@@ -19,8 +19,8 @@ import RecordsMap from './records-map';
 import { mockRecords } from './util/mockRecords';
 
 export default function RecordsTable() {
-    const { records } = useRecords();
-    // const records = mockRecords;
+    // const { records } = useRecords();
+    const records = mockRecords;
     const { data: watchesObject } = useSWR('/api/watch', fetchJson<Watches>);
     const [hoveredRecordId, setHoveredRecordId] = useState<number | null>(null);
     const [backgroundSelected, setBackgroundSelected] = useState<number | null>(

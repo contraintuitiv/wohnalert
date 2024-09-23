@@ -32,6 +32,8 @@ export default function Filter({
     const [ntfy, setNtfy] = useState<Ntfy>();
     const [isModalOpen, setIsModalOpen] = useState(false);
     const [isFilterModalOpen, setIsFilterModalOpen] = useState(false);
+    const [topic, setTopic] = useState('');
+    const [error, setError] = useState('');
 
     useEffect(() => {
         const storedShowFilter = localStorage.getItem('showFilter');
@@ -366,7 +368,8 @@ export default function Filter({
                             <Label htmlFor="maxRent">maximale Miete</Label>
                             <Input
                                 type="number"
-                                placeholder="450"
+                                className="placeholder-gray-50"
+                                placeholder="zB 450"
                                 step="50"
                                 min="0"
                                 value={maxRent}
@@ -384,7 +387,7 @@ export default function Filter({
                             <Label htmlFor="minSize">minimale Größe (m²)</Label>
                             <Input
                                 type="number"
-                                placeholder="50"
+                                placeholder="zB 50"
                                 value={minSize}
                                 step="10"
                                 min="0"
@@ -402,7 +405,7 @@ export default function Filter({
                             <Label htmlFor="minRooms">mind. Zimmer</Label>
                             <Input
                                 type="number"
-                                placeholder="2"
+                                placeholder="zB 2"
                                 min="0"
                                 value={minRooms}
                                 onChange={e => {
@@ -484,13 +487,26 @@ export default function Filter({
                                     </div>
                                 </div>
                             ) : (
-                                <Button
-                                    className="px-2"
-                                    onClick={handleAddNtfyClick}
-                                >
-                                    🔔 Push-Notification für diesen Filter
-                                    erstellen
-                                </Button>
+                                <div className="flex-col">
+                                    <Button
+                                        className="px-2"
+                                        onClick={handleAddNtfyClick}
+                                    >
+                                        🔔 Push-Notification für diesen Filter
+                                        erstellen
+                                    </Button>
+                                    <Input
+                                        className="w-full"
+                                        placeholder="Enter your filter name"
+                                        minLength={3}
+                                        maxLength={40}
+                                        value={topic}
+                                        onChange={e => {
+                                            setTopic(e.target.value);
+                                            setError('');
+                                        }}
+                                    ></Input>
+                                </div>
                             ))}
                     </div>
                 </div>
