@@ -8,37 +8,37 @@ on:
             - main
 
 jobs:
-    # build:
-    #     runs-on: ubuntu-latest
-    #     steps:
-    #         - name: Checkout repository
-    #           uses: actions/checkout@v4
+    build:
+        runs-on: ubuntu-latest
+        # steps:
+        #     - name: Checkout repository
+        #       uses: actions/checkout@v4
 
-    #         - name: Setup Node.js
-    #           uses: actions/setup-node@v2
-    #           with:
-    #               node-version: '20'
+        #     - name: Setup Node.js
+        #       uses: actions/setup-node@v2
+        #       with:
+        #           node-version: '20'
 
-    #         - name: Set env
-    #           run: echo "${{ secrets.ENV }}" >> $GITHUB_ENV
+        #     - name: Set env
+        #       run: echo "${{ secrets.ENV }}" >> $GITHUB_ENV
 
-    #         # - name: Install Dependencies
-    #         #   run: npm ci
-    #         # - name: Migration
-    #         #   run: npx prisma migrate deploy
-    #         # - name: Build
-    #         #   run: npm run build
+        #     # - name: Install Dependencies
+        #     #   run: npm ci
+        #     # - name: Migration
+        #     #   run: npx prisma migrate deploy
+        #     # - name: Build
+        #     #   run: npm run build
 
-    #         # DOCKER_IMAGE_NAME: free to choose (default: github.repository)
-    #         # GITHUB_TOKEN and actor are automatically set by Github
-    #         # REGISTRY_USERNAME: Your github User name (default: github.actor = user of initial pipeline run)
-    #         # REGISTRY_FOLDER: Your folder in the registry (default: github.repository = repository name)
-    #         - name: Dockerize
-    #           run: |
-    #               docker build --build-arg DATABASE_URL=$DATABASE_URL --build-arg CD_API=$CD_API --build-arg CD_API_KEY=$CD_API_KEY --build-arg NTFY_HOST=$NTFY_HOST -t ${{ vars.DOCKER_IMAGE_NAME || github.repository }}:latest .
-    #               echo ${{ secrets.GITHUB_TOKEN }} | docker login ghcr.io -u ${{ github.actor }} --password-stdin
-    #               docker tag wohnalert:latest ghcr.io/${{ secrets.REGISTRY_USERNAME || github.actor }}/${{ vars.REGISTRY_FOLDER || github.repository }}/${{ vars.DOCKER_IMAGE_NAME || github.repository }}:latest
-    #               docker push ghcr.io/${{ secrets.REGISTRY_USERNAME || github.actor }}/${{ vars.REGISTRY_FOLDER || github.repository }}/${{ vars.DOCKER_IMAGE_NAME || github.repository }}:latest
+        #     # DOCKER_IMAGE_NAME: free to choose (default: github.repository)
+        #     # GITHUB_TOKEN and actor are automatically set by Github
+        #     # REGISTRY_USERNAME: Your github User name (default: github.actor = user of initial pipeline run)
+        #     # REGISTRY_FOLDER: Your folder in the registry (default: github.repository = repository name)
+        #     - name: Dockerize
+        #       run: |
+        #           docker build --build-arg DATABASE_URL=$DATABASE_URL --build-arg CD_API=$CD_API --build-arg CD_API_KEY=$CD_API_KEY --build-arg NTFY_HOST=$NTFY_HOST -t ${{ vars.DOCKER_IMAGE_NAME || github.repository }}:latest .
+        #           echo ${{ secrets.GITHUB_TOKEN }} | docker login ghcr.io -u ${{ github.actor }} --password-stdin
+        #           docker tag wohnalert:latest ghcr.io/${{ secrets.REGISTRY_USERNAME || github.actor }}/${{ vars.REGISTRY_FOLDER || github.repository }}/${{ vars.DOCKER_IMAGE_NAME || github.repository }}:latest
+        #           docker push ghcr.io/${{ secrets.REGISTRY_USERNAME || github.actor }}/${{ vars.REGISTRY_FOLDER || github.repository }}/${{ vars.DOCKER_IMAGE_NAME || github.repository }}:latest
 
     deploy:
         runs-on: ubuntu-latest
