@@ -260,6 +260,7 @@ export default function Filter({
                         </a>{' '}
                         oder
                         <a>
+                            {' '}
                             <a
                                 href="https://apps.apple.com/de/app/ntfy/id1625396347"
                                 className="underline"
@@ -267,7 +268,7 @@ export default function Filter({
                                 rel="noreferrer"
                             >
                                 Iphone
-                            </a>
+                            </a>{' '}
                         </a>
                         runterladen und Topic abonnieren:{' '}
                         <b>

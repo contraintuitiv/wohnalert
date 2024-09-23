@@ -12,7 +12,7 @@ import type { Prisma } from '@prisma/client';
 
 export const TransactionIsolationLevelSchema = z.enum(['Serializable']);
 
-export const RecordScalarFieldEnumSchema = z.enum(['id','createdAt','url','description','landlord','lat','long','house_number','road','neighbourhood','suburb','borough','size','rooms','rent','wbs','properties']);
+export const RecordScalarFieldEnumSchema = z.enum(['id','createdAt','url','description','landlord','lat','long','house_number','road','neighbourhood','suburb','borough','size','rooms','rent','wbs','properties','hover']);
 
 export const NtfyScalarFieldEnumSchema = z.enum(['id','createdAt','host','topic','minRent','maxRent','minRooms','maxRooms','minSize','maxSize','landlords','boroughs']);
 
@@ -45,6 +45,7 @@ export const RecordSchema = z.object({
   rent: z.number(),
   wbs: z.boolean(),
   properties: z.string(),
+  hover: z.boolean(),
 })
 
 export type Record = z.infer<typeof RecordSchema>
@@ -95,6 +96,7 @@ export const RecordSelectSchema: z.ZodType<Prisma.RecordSelect> = z.object({
   rent: z.boolean().optional(),
   wbs: z.boolean().optional(),
   properties: z.boolean().optional(),
+  hover: z.boolean().optional(),
 }).strict()
 
 // NTFY
@@ -141,6 +143,7 @@ export const RecordWhereInputSchema: z.ZodType<Prisma.RecordWhereInput> = z.obje
   rent: z.union([ z.lazy(() => FloatFilterSchema),z.number() ]).optional(),
   wbs: z.union([ z.lazy(() => BoolFilterSchema),z.boolean() ]).optional(),
   properties: z.union([ z.lazy(() => StringFilterSchema),z.string() ]).optional(),
+  hover: z.union([ z.lazy(() => BoolFilterSchema),z.boolean() ]).optional(),
 }).strict();
 
 export const RecordOrderByWithRelationInputSchema: z.ZodType<Prisma.RecordOrderByWithRelationInput> = z.object({
@@ -160,7 +163,8 @@ export const RecordOrderByWithRelationInputSchema: z.ZodType<Prisma.RecordOrderB
   rooms: z.lazy(() => SortOrderSchema).optional(),
   rent: z.lazy(() => SortOrderSchema).optional(),
   wbs: z.lazy(() => SortOrderSchema).optional(),
-  properties: z.lazy(() => SortOrderSchema).optional()
+  properties: z.lazy(() => SortOrderSchema).optional(),
+  hover: z.lazy(() => SortOrderSchema).optional()
 }).strict();
 
 export const RecordWhereUniqueInputSchema: z.ZodType<Prisma.RecordWhereUniqueInput> = z.object({
@@ -187,6 +191,7 @@ export const RecordWhereUniqueInputSchema: z.ZodType<Prisma.RecordWhereUniqueInp
   rent: z.union([ z.lazy(() => FloatFilterSchema),z.number() ]).optional(),
   wbs: z.union([ z.lazy(() => BoolFilterSchema),z.boolean() ]).optional(),
   properties: z.union([ z.lazy(() => StringFilterSchema),z.string() ]).optional(),
+  hover: z.union([ z.lazy(() => BoolFilterSchema),z.boolean() ]).optional(),
 }).strict());
 
 export const RecordOrderByWithAggregationInputSchema: z.ZodType<Prisma.RecordOrderByWithAggregationInput> = z.object({
@@ -207,6 +212,7 @@ export const RecordOrderByWithAggregationInputSchema: z.ZodType<Prisma.RecordOrd
   rent: z.lazy(() => SortOrderSchema).optional(),
   wbs: z.lazy(() => SortOrderSchema).optional(),
   properties: z.lazy(() => SortOrderSchema).optional(),
+  hover: z.lazy(() => SortOrderSchema).optional(),
   _count: z.lazy(() => RecordCountOrderByAggregateInputSchema).optional(),
   _avg: z.lazy(() => RecordAvgOrderByAggregateInputSchema).optional(),
   _max: z.lazy(() => RecordMaxOrderByAggregateInputSchema).optional(),
@@ -235,6 +241,7 @@ export const RecordScalarWhereWithAggregatesInputSchema: z.ZodType<Prisma.Record
   rent: z.union([ z.lazy(() => FloatWithAggregatesFilterSchema),z.number() ]).optional(),
   wbs: z.union([ z.lazy(() => BoolWithAggregatesFilterSchema),z.boolean() ]).optional(),
   properties: z.union([ z.lazy(() => StringWithAggregatesFilterSchema),z.string() ]).optional(),
+  hover: z.union([ z.lazy(() => BoolWithAggregatesFilterSchema),z.boolean() ]).optional(),
 }).strict();
 
 export const NtfyWhereInputSchema: z.ZodType<Prisma.NtfyWhereInput> = z.object({
@@ -345,7 +352,8 @@ export const RecordCreateInputSchema: z.ZodType<Prisma.RecordCreateInput> = z.ob
   rooms: z.number(),
   rent: z.number(),
   wbs: z.boolean(),
-  properties: z.string()
+  properties: z.string(),
+  hover: z.boolean()
 }).strict();
 
 export const RecordUncheckedCreateInputSchema: z.ZodType<Prisma.RecordUncheckedCreateInput> = z.object({
@@ -365,7 +373,8 @@ export const RecordUncheckedCreateInputSchema: z.ZodType<Prisma.RecordUncheckedC
   rooms: z.number(),
   rent: z.number(),
   wbs: z.boolean(),
-  properties: z.string()
+  properties: z.string(),
+  hover: z.boolean()
 }).strict();
 
 export const RecordUpdateInputSchema: z.ZodType<Prisma.RecordUpdateInput> = z.object({
@@ -385,6 +394,7 @@ export const RecordUpdateInputSchema: z.ZodType<Prisma.RecordUpdateInput> = z.ob
   rent: z.union([ z.number(),z.lazy(() => FloatFieldUpdateOperationsInputSchema) ]).optional(),
   wbs: z.union([ z.boolean(),z.lazy(() => BoolFieldUpdateOperationsInputSchema) ]).optional(),
   properties: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
+  hover: z.union([ z.boolean(),z.lazy(() => BoolFieldUpdateOperationsInputSchema) ]).optional(),
 }).strict();
 
 export const RecordUncheckedUpdateInputSchema: z.ZodType<Prisma.RecordUncheckedUpdateInput> = z.object({
@@ -405,6 +415,7 @@ export const RecordUncheckedUpdateInputSchema: z.ZodType<Prisma.RecordUncheckedU
   rent: z.union([ z.number(),z.lazy(() => FloatFieldUpdateOperationsInputSchema) ]).optional(),
   wbs: z.union([ z.boolean(),z.lazy(() => BoolFieldUpdateOperationsInputSchema) ]).optional(),
   properties: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
+  hover: z.union([ z.boolean(),z.lazy(() => BoolFieldUpdateOperationsInputSchema) ]).optional(),
 }).strict();
 
 export const RecordCreateManyInputSchema: z.ZodType<Prisma.RecordCreateManyInput> = z.object({
@@ -424,7 +435,8 @@ export const RecordCreateManyInputSchema: z.ZodType<Prisma.RecordCreateManyInput
   rooms: z.number(),
   rent: z.number(),
   wbs: z.boolean(),
-  properties: z.string()
+  properties: z.string(),
+  hover: z.boolean()
 }).strict();
 
 export const RecordUpdateManyMutationInputSchema: z.ZodType<Prisma.RecordUpdateManyMutationInput> = z.object({
@@ -444,6 +456,7 @@ export const RecordUpdateManyMutationInputSchema: z.ZodType<Prisma.RecordUpdateM
   rent: z.union([ z.number(),z.lazy(() => FloatFieldUpdateOperationsInputSchema) ]).optional(),
   wbs: z.union([ z.boolean(),z.lazy(() => BoolFieldUpdateOperationsInputSchema) ]).optional(),
   properties: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
+  hover: z.union([ z.boolean(),z.lazy(() => BoolFieldUpdateOperationsInputSchema) ]).optional(),
 }).strict();
 
 export const RecordUncheckedUpdateManyInputSchema: z.ZodType<Prisma.RecordUncheckedUpdateManyInput> = z.object({
@@ -464,6 +477,7 @@ export const RecordUncheckedUpdateManyInputSchema: z.ZodType<Prisma.RecordUnchec
   rent: z.union([ z.number(),z.lazy(() => FloatFieldUpdateOperationsInputSchema) ]).optional(),
   wbs: z.union([ z.boolean(),z.lazy(() => BoolFieldUpdateOperationsInputSchema) ]).optional(),
   properties: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
+  hover: z.union([ z.boolean(),z.lazy(() => BoolFieldUpdateOperationsInputSchema) ]).optional(),
 }).strict();
 
 export const NtfyCreateInputSchema: z.ZodType<Prisma.NtfyCreateInput> = z.object({
@@ -640,7 +654,8 @@ export const RecordCountOrderByAggregateInputSchema: z.ZodType<Prisma.RecordCoun
   rooms: z.lazy(() => SortOrderSchema).optional(),
   rent: z.lazy(() => SortOrderSchema).optional(),
   wbs: z.lazy(() => SortOrderSchema).optional(),
-  properties: z.lazy(() => SortOrderSchema).optional()
+  properties: z.lazy(() => SortOrderSchema).optional(),
+  hover: z.lazy(() => SortOrderSchema).optional()
 }).strict();
 
 export const RecordAvgOrderByAggregateInputSchema: z.ZodType<Prisma.RecordAvgOrderByAggregateInput> = z.object({
@@ -669,7 +684,8 @@ export const RecordMaxOrderByAggregateInputSchema: z.ZodType<Prisma.RecordMaxOrd
   rooms: z.lazy(() => SortOrderSchema).optional(),
   rent: z.lazy(() => SortOrderSchema).optional(),
   wbs: z.lazy(() => SortOrderSchema).optional(),
-  properties: z.lazy(() => SortOrderSchema).optional()
+  properties: z.lazy(() => SortOrderSchema).optional(),
+  hover: z.lazy(() => SortOrderSchema).optional()
 }).strict();
 
 export const RecordMinOrderByAggregateInputSchema: z.ZodType<Prisma.RecordMinOrderByAggregateInput> = z.object({
@@ -689,7 +705,8 @@ export const RecordMinOrderByAggregateInputSchema: z.ZodType<Prisma.RecordMinOrd
   rooms: z.lazy(() => SortOrderSchema).optional(),
   rent: z.lazy(() => SortOrderSchema).optional(),
   wbs: z.lazy(() => SortOrderSchema).optional(),
-  properties: z.lazy(() => SortOrderSchema).optional()
+  properties: z.lazy(() => SortOrderSchema).optional(),
+  hover: z.lazy(() => SortOrderSchema).optional()
 }).strict();
 
 export const RecordSumOrderByAggregateInputSchema: z.ZodType<Prisma.RecordSumOrderByAggregateInput> = z.object({
