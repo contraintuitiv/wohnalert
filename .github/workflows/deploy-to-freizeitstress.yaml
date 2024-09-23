@@ -4,6 +4,7 @@ name: Deploy Nextjs to freizeitstress.org
 on:
     push:
         branches:
+            - pipeline
             - main
 
 jobs:
