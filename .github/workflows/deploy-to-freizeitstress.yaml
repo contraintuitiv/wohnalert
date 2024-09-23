@@ -18,6 +18,9 @@ jobs:
               with:
                   node-version: '20'
 
+            - name: Set env
+              run: echo "${{ secrets.ENV }}" >> $GITHUB_ENV
+
             - name: Build
               run: npm ci && npm run build
 
@@ -59,5 +62,5 @@ jobs:
                     docker rm ${{ vars.DOCKER_IMAGE_NAME || github.repository}} || true
                     docker rmi ghcr.io/${{ secrets.REGISTRY_USERNAME || github.actor }}/${{ secrets.REGISTRY_USERNAME || github.actor }}/${{ vars.REGISTRY_FOLDER || github.repository }}/${{ vars.DOCKER_IMAGE_NAME || github.repository }}:latest || true
                     docker pull ghcr.io/${{ secrets.REGISTRY_USERNAME || github.actor }}/${{ secrets.REGISTRY_USERNAME || github.actor }}/${{ vars.REGISTRY_FOLDER || github.repository }}/${{ vars.DOCKER_IMAGE_NAME || github.repository }}:latest
-                    docker run -d -p ${{vars.DOCKER_PORT || 4541}}:4541 --name ${{ vars.DOCKER_IMAGE_NAME || github.repository}} ghcr.io/${{ secrets.REGISTRY_USERNAME || github.actor }}/${{ vars.REGISTRY_FOLDER || github.repository }}/${{ vars.DOCKER_IMAGE_NAME || github.repository }}:latest
+                    docker run -d --env-file $GITHUB_ENV -p ${{vars.DOCKER_PORT || 4541}}:4541 --name ${{ vars.DOCKER_IMAGE_NAME || github.repository}} ghcr.io/${{ secrets.REGISTRY_USERNAME || github.actor }}/${{ vars.REGISTRY_FOLDER || github.repository }}/${{ vars.DOCKER_IMAGE_NAME || github.repository }}:latest
                   EOF
