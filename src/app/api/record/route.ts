@@ -413,9 +413,9 @@ function parseStadt_Und_Land(
                         return;
                     }
                     if (
-                        part.includes(
-                            'mit WBS' || 'WBS erforderlich' || 'WBS erwünscht'
-                        )
+                        part.includes('mit WBS') ||
+                        part.includes('WBS erforderlich') ||
+                        part.includes('WBS erwünscht')
                     ) {
                         setProperty('wbs', 'true', extractedRecords);
                         return;
