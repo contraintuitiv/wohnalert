@@ -67,7 +67,7 @@ jobs:
                     docker rm ${{ vars.DOCKER_IMAGE_NAME || github.repository}} || true
                     docker rmi ghcr.io/${{ secrets.REGISTRY_USERNAME || github.actor }}/${{ vars.REGISTRY_FOLDER || github.repository }}/${{ vars.DOCKER_IMAGE_NAME || github.repository }}:latest || true
                     docker pull ghcr.io/${{ secrets.REGISTRY_USERNAME || github.actor }}/${{ vars.REGISTRY_FOLDER || github.repository }}/${{ vars.DOCKER_IMAGE_NAME || github.repository }}:latest
-                    echo $GITHUB_ENV >> .env
+                    echo ${{ secrets.ENV }} >> .env
                     cat .env
                     docker run -d --env-file .env -p ${{vars.DOCKER_PORT || 4541}}:4541 --name ${{ vars.DOCKER_IMAGE_NAME || github.repository}} ghcr.io/${{ secrets.REGISTRY_USERNAME || github.actor }}/${{ vars.REGISTRY_FOLDER || github.repository }}/${{ vars.DOCKER_IMAGE_NAME || github.repository }}:latest
                   EOF
