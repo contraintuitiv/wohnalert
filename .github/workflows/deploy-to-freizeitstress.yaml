@@ -22,20 +22,20 @@ jobs:
             - name: Set env
               run: echo "${{ secrets.ENV }}" >> $GITHUB_ENV
 
-            - name: Install Dependencies
-              run: npm ci
-            - name: Migration
-              run: npx prisma migrate deploy
-            - name: Build
-              run: npm run build
+            # - name: Install Dependencies
+            #   run: npm ci
+            # - name: Migration
+            #   run: npx prisma migrate deploy
+            # - name: Build
+            #   run: npm run build
 
-              # DOCKER_IMAGE_NAME: free to choose (default: github.repository)
-              # GITHUB_TOKEN and actor are automatically set by Github
-              # REGISTRY_USERNAME: Your github User name (default: github.actor = user of initial pipeline run)
-              # REGISTRY_FOLDER: Your folder in the registry (default: github.repository = repository name)
+            # DOCKER_IMAGE_NAME: free to choose (default: github.repository)
+            # GITHUB_TOKEN and actor are automatically set by Github
+            # REGISTRY_USERNAME: Your github User name (default: github.actor = user of initial pipeline run)
+            # REGISTRY_FOLDER: Your folder in the registry (default: github.repository = repository name)
             - name: Dockerize
               run: |
-                  docker build -t ${{ vars.DOCKER_IMAGE_NAME || github.repository }}:latest .
+                  docker build -t --env-file=$GITHUB_ENV ${{ vars.DOCKER_IMAGE_NAME || github.repository }}:latest .
                   echo ${{ secrets.GITHUB_TOKEN }} | docker login ghcr.io -u ${{ github.actor }} --password-stdin
                   docker tag wohnalert:latest ghcr.io/${{ secrets.REGISTRY_USERNAME || github.actor }}/${{ vars.REGISTRY_FOLDER || github.repository }}/${{ vars.DOCKER_IMAGE_NAME || github.repository }}:latest
                   docker push ghcr.io/${{ secrets.REGISTRY_USERNAME || github.actor }}/${{ vars.REGISTRY_FOLDER || github.repository }}/${{ vars.DOCKER_IMAGE_NAME || github.repository }}:latest
