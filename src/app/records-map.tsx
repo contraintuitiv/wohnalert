@@ -58,8 +58,8 @@ export default function RecordsMap({
     hoveredRecordId: number | null;
     centerCoords: [number, number] | null;
 }) {
-    // const { records } = useRecords();
-    const records = mockRecords;
+    const { records } = useRecords();
+    // const records = mockRecords;
 
     return (
         <MapContainer
@@ -99,7 +99,7 @@ export default function RecordsMap({
                             {record.road} {record.house_number}
                             <br />
                             <br />
-                            {/* {JSON.parse(record.properties).join(', ')} */}
+                            {JSON.parse(record.properties).join(', ')}
                         </Popup>
                     </Marker>
                 ))}
