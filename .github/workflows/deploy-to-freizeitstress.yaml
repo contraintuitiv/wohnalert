@@ -22,8 +22,12 @@ jobs:
             - name: Set env
               run: echo "${{ secrets.ENV }}" >> $GITHUB_ENV
 
+            - name: Install Dependencies
+              run: npm ci
+            - name: Migration
+              run: npx prisma migrate deploy
             - name: Build
-              run: npm ci && npm run build
+              run: npm run build
 
               # DOCKER_IMAGE_NAME: free to choose (default: github.repository)
               # GITHUB_TOKEN and actor are automatically set by Github
