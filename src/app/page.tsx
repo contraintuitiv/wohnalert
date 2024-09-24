@@ -4,6 +4,7 @@ import RecordsMap from './records-map';
 import RecordsTable from './records-table';
 import { SettingsProvider } from '@/context/settings-context';
 import Filter from './filter';
+
 export default async function Home() {
     const data = await prisma.record.findMany({
         distinct: ['borough'],
@@ -11,6 +12,7 @@ export default async function Home() {
             borough: true,
         },
     });
+
     const boroughs: string[] = data.map(str => str.borough);
 
     const records = await prisma.record.findMany({

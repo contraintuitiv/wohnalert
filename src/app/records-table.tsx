@@ -19,7 +19,6 @@ import RecordsMap from './records-map';
 import { mockRecords } from './util/mockRecords';
 
 export default function RecordsTable() {
-
     const { records } = useRecords();
     // const records = mockRecords;
     const { data: watchesObject } = useSWR('/api/watch', fetchJson<Watches>);
@@ -101,7 +100,6 @@ export default function RecordsTable() {
                             <TableRow
                                 key={record.id}
                                 onMouseEnter={() => {
-                                    console.log(hoveredRecordId);
                                     setHoveredRecordId(record.id);
                                 }}
                                 onMouseLeave={() => setHoveredRecordId(null)}
