@@ -405,7 +405,7 @@ function parseDegewo2(data: string[], extractedRecords: ExtractedRecord[]) {
             return;
         }
 
-        if (line.startsWith('        * ')
+        if (line.startsWith('        * ')) {
             if (line.includes('m²')) {
                 const [, size] = line.split('*');
                 setProperty('size', size, extractedRecords);
