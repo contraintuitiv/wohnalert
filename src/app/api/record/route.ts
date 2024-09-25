@@ -504,7 +504,6 @@ function parseStadt_Und_Land(
         }
         if (/Gesamtmiete/.test(line)) {
             const [, rent] = line.split('Gesamtmiete');
-            rent.trim();
             setProperty('rent', rent, extractedRecords);
         }
 
