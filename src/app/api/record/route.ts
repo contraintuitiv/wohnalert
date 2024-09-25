@@ -481,6 +481,7 @@ function parseStadt_Und_Land(
                 }
 
                 if (!part.includes('Zimmer') && !part.includes('m²')) {
+                    part.replace(' - ', '');
                     setProperty('title', part, extractedRecords);
                     if (
                         part.includes('kein WBS') ||
