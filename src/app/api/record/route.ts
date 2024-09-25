@@ -9,6 +9,7 @@ import {
 } from '../../../../lib/util';
 import { prisma } from '../../../../lib/prisma';
 import * as Sentry from '@sentry/nextjs';
+import { set } from 'zod';
 
 export async function GET(req: NextRequest) {
     const {
@@ -314,58 +315,118 @@ function parseDegewo(data: string[], extractedRecords: ExtractedRecord[]) {
     data.filter(
         line => !line.endsWith('Merken') && !line.startsWith(' /')
     ).forEach(line => {
-        if (/^        [^\s]/.test(line)) {
-            extractedRecords.push({
-                ...newExtractedRecord(),
-                title: line.trim(),
-            });
-            setProperty(
-                'url',
-                urls[extractedRecords.length - 1],
-                extractedRecords
-            );
-            return;
-        }
-        if (line.startsWith('    ')) {
+        if (line.startsWith('      ')) {
             if (line.includes('|')) {
-                const address = line.trim().replace(' | ', ', ');
-                console.log(line + 'degewo');
-                console.log(address + ' degewo');
-                setProperty('address', address, extractedRecords);
+                line.trim().replace(' | ', ', ');
+                extractedRecords.push({
+                    ...newExtractedRecord(),
+                    address: line,
+                });
+                setProperty('address', line, extractedRecords);
+                setProperty(
+                    'url',
+                    urls[extractedRecords.length - 1],
+                    extractedRecords
+                );
+                return;
+            } else {
+                setProperty('title', line, extractedRecords);
                 return;
             }
-            setProperty('title', line, extractedRecords);
-            return;
         }
 
-        if (line.startsWith('      * ')) {
+        if (line.startsWith('        *')) {
             if (line.includes('m²')) {
-                setProperty('size', line, extractedRecords);
+                const [, size] = line.split('*');
+                setProperty('size', size, extractedRecords);
                 return;
             }
             if (line.includes('Zimmer')) {
-                setProperty('rooms', line, extractedRecords);
+                const [, rooms] = line.split('*');
+                setProperty('rooms', rooms, extractedRecords);
                 return;
             }
             if (line.includes('mit WBS')) {
                 setProperty('wbs', 'true', extractedRecords);
                 return;
-            }
-        }
-
-        if (/^              [^\s]/.test(line)) {
-            if (line.includes('WBS erforderlich')) {
-                setProperty('wbs', 'true', extractedRecords);
+            } else {
+                setProperty('wbs', 'false', extractedRecords);
                 return;
             }
-            extractedRecords[extractedRecords.length - 1].properties.push(
-                line.trim()
-            );
         }
-
+        if (line.includes('Warmmiete')) {
+            const [, rent] = line.split('Warmmiete:');
+            setProperty('rent', line, extractedRecords);
+            return;
+        }
         return;
     });
-    console.log(extractedRecords + 'degewo');
+    return extractedRecords;
+}
+
+function parseDegewo2(data: string[], extractedRecords: ExtractedRecord[]) {
+    const setProperty = (
+        key: PossibleProperties,
+        value: string,
+        extractedRecords: ExtractedRecord[]
+    ) => {
+        extractedRecords[extractedRecords.length - 1][key] = value.trim();
+    };
+
+    // filter out urls (and with that the co)
+    const urls = data
+        .filter(line => line.startsWith('  /'))
+        .map(line => `https://immosuche.degewo.de${line.trim()}`);
+
+    data.filter(
+        line => !line.endsWith('Merken') && !line.startsWith(' /')
+    ).forEach(line => {
+        if (line.startsWith('      ')) {
+            if (line.includes('|')) {
+                line.trim().replace(' | ', ', ');
+                extractedRecords.push({
+                    ...newExtractedRecord(),
+                    address: line,
+                });
+                setProperty('address', line, extractedRecords);
+                setProperty(
+                    'url',
+                    urls[extractedRecords.length - 1],
+                    extractedRecords
+                );
+                return;
+            } else {
+                setProperty('title', line, extractedRecords);
+                return;
+            }
+        }
+
+        if (line.startsWith('        *')) {
+            if (line.includes('m²')) {
+                const [, size] = line.split('*');
+                setProperty('size', size, extractedRecords);
+                return;
+            }
+            if (line.includes('Zimmer')) {
+                const [, rooms] = line.split('*');
+                setProperty('rooms', rooms, extractedRecords);
+                return;
+            }
+            if (line.includes('mit WBS')) {
+                setProperty('wbs', 'true', extractedRecords);
+                return;
+            } else {
+                setProperty('wbs', 'false', extractedRecords);
+                return;
+            }
+        }
+        if (line.includes('Warmmiete')) {
+            const [, rent] = line.split('Warmmiete:');
+            setProperty('rent', line, extractedRecords);
+            return;
+        }
+        return;
+    });
     return extractedRecords;
 }
 
@@ -399,49 +460,50 @@ function parseStadt_Und_Land(
                 });
                 setProperty('address', line, extractedRecords);
                 return;
+            } else {
+                line.split(/(?<=Zimmer)|(?<=m²)| – /).forEach(part => {
+                    part = part.trim(); // Trim any extra whitespace
+                    console.log(part + 'stadt und land');
+                    if (part.includes('Zimmer')) {
+                        setProperty('rooms', part, extractedRecords);
+                        return;
+                    }
+
+                    if (part.includes('m²')) {
+                        setProperty('size', part, extractedRecords);
+                        return;
+                    }
+
+                    if (!part.includes('Zimmer') && !part.includes('m²')) {
+                        if (
+                            part.includes('kein WBS') ||
+                            part.includes('ohne WBS')
+                        ) {
+                            setProperty('wbs', 'false', extractedRecords);
+                            return;
+                        }
+                        if (
+                            part.includes('mit WBS') ||
+                            part.includes('WBS erforderlich') ||
+                            part.includes('WBS erwünscht')
+                        ) {
+                            setProperty('wbs', 'true', extractedRecords);
+                            return;
+                        }
+                        setProperty('title', part, extractedRecords);
+                        return;
+                    }
+                });
             }
-            line.split(/(?<=Zimmer)|(?<=m²)| – /).forEach(part => {
-                part = part.trim(); // Trim any extra whitespace
-
-                if (part.includes('Zimmer')) {
-                    setProperty('rooms', part, extractedRecords);
-                    return;
-                }
-
-                if (part.includes('m²')) {
-                    setProperty('size', part, extractedRecords);
-                    return;
-                }
-
-                if (!part.includes('Zimmer') && !part.includes('m²')) {
-                    if (
-                        part.includes('kein WBS') ||
-                        part.includes('ohne WBS')
-                    ) {
-                        setProperty('wbs', 'false', extractedRecords);
-                        return;
-                    }
-                    if (
-                        part.includes('mit WBS') ||
-                        part.includes('WBS erforderlich') ||
-                        part.includes('WBS erwünscht')
-                    ) {
-                        setProperty('wbs', 'true', extractedRecords);
-                        return;
-                    }
-                    setProperty('title', part, extractedRecords);
-                    return;
-                }
-            });
         }
-        if (line.startsWith('        Gesamtmiete')) {
+        if (/Gesamtmiete/.test(line)) {
             const [, rent] = line.split('Gesamtmiete');
+            rent.trim();
             setProperty('rent', rent, extractedRecords);
         }
 
         return;
     });
-    console.log(extractedRecords + 'stadt und land');
     return extractedRecords;
 }
 
@@ -494,6 +556,9 @@ export async function POST(req: NextRequest) {
     }
     if (watchTitle.toLowerCase().startsWith('degewo')) {
         extractedRecords = parseDegewo(data, extractedRecords);
+    }
+    if (watchTitle.toLowerCase().startsWith('degewo2')) {
+        extractedRecords = parseDegewo2(data, extractedRecords);
     }
     if (watchTitle.toLowerCase().startsWith('stadt_und_land')) {
         extractedRecords = parseStadt_Und_Land(data, extractedRecords);
