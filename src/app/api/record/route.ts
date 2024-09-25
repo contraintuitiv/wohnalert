@@ -311,19 +311,19 @@ function parseDegewo(data: string[], extractedRecords: ExtractedRecord[]) {
         .filter(line => line.startsWith('  /'))
         .map(line => `https://immosuche.degewo.de${line.trim()}`);
 
-    console.log('DEGEWO' + urls);
-
     data.filter(
         line => !line.endsWith('Merken') && !line.startsWith(' /')
     ).forEach(line => {
         if (line.startsWith('    ')) {
             if (line.includes('|')) {
-                line.trim().replace('|', ', ');
+                const address = line.trim().replace('|', ', ');
                 console.log(line + 'degewo');
-                setProperty('address', line, extractedRecords);
+                console.log(address + ' degewo');
+                setProperty('address', address, extractedRecords);
                 return;
             }
             setProperty('title', line, extractedRecords);
+            return;
         }
 
         if (/^        [^\s]/.test(line)) {
