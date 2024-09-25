@@ -49,9 +49,6 @@ RUN chown nextjs:nodejs .next
 COPY --from=builder --chown=nextjs:nodejs /app/.next/standalone ./
 COPY --from=builder --chown=nextjs:nodejs /app/.next/static ./.next/static
 
-VOLUME /app/prisma/records.db
-RUN chown nextjs:nodejs /app/prisma/records.db
-
 USER nextjs
 
 EXPOSE 4541
