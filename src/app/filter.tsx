@@ -38,7 +38,6 @@ export default function Filter({
         if (storedShowFilter !== null) {
             setShowFilter(JSON.parse(storedShowFilter));
         }
-        console.log(initialBoroughs);
     }, []);
 
     useEffect(() => {

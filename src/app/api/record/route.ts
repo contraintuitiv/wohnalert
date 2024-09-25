@@ -103,8 +103,6 @@ function parseGewobag(data: string[], extractedRecords: ExtractedRecord[]) {
         extractedRecords[extractedRecords.length - 1][key] = value.trim();
     };
 
-    console.log('GEWO extractedRecords:' + data);
-
     // filter out urls (and with that the co)
     const urls = data
         .filter(line => line.startsWith('    https://www.gewobag.de'))
@@ -245,8 +243,6 @@ function parseHowoge(data: string[], extractedRecords: ExtractedRecord[]) {
         .filter(line => line.startsWith('  /'))
         .map(line => `https://www.howoge.de${line.trim()}`);
 
-    console.log('HOWOGE urLS:' + urls);
-
     data.filter(
         line =>
             !line.endsWith('Auf Karte anzeigen') &&
@@ -295,8 +291,6 @@ function parseHowoge(data: string[], extractedRecords: ExtractedRecord[]) {
             );
         }
 
-        console.log('HOWOGE extractedRecords:' + extractedRecords);
-
         return;
     });
 
@@ -316,8 +310,6 @@ function parseDegewo(data: string[], extractedRecords: ExtractedRecord[]) {
     const urls = data
         .filter(line => line.startsWith('  /'))
         .map(line => `https://immosuche.degewo.de${line.trim()}`);
-
-    console.log('DEGEWO urLS:' + urls);
 
     data.filter(
         line => !line.endsWith('Merken') && !line.startsWith(' /')
@@ -371,8 +363,6 @@ function parseDegewo(data: string[], extractedRecords: ExtractedRecord[]) {
 
         return;
     });
-    console.log('DEGEWO extractedRecords:' + extractedRecords);
-
     return extractedRecords;
 }
 
@@ -390,10 +380,8 @@ function parseStadt_Und_Land(
 
     // filter out urls (and with that the co)
     const urls = data
-        .filter(line => line.startsWith('  /'))
+        .filter(line => line.startsWith('    /'))
         .map(line => `https://www.stadtundland.de${line.trim()}`);
-
-    console.log('Stadt und Land urLS:' + urls);
 
     data.filter(line => !line.startsWith(' /')).forEach(line => {
         if (line.startsWith('      ')) {
@@ -443,8 +431,6 @@ function parseStadt_Und_Land(
 
         return;
     });
-    console.log('Stadt und Land extractedRecords:' + extractedRecords);
-
     return extractedRecords;
 }
 
