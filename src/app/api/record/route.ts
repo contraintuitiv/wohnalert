@@ -314,18 +314,6 @@ function parseDegewo(data: string[], extractedRecords: ExtractedRecord[]) {
     data.filter(
         line => !line.endsWith('Merken') && !line.startsWith(' /')
     ).forEach(line => {
-        if (line.startsWith('    ')) {
-            if (line.includes('|')) {
-                const address = line.trim().replace('|', ', ');
-                console.log(line + 'degewo');
-                console.log(address + ' degewo');
-                setProperty('address', address, extractedRecords);
-                return;
-            }
-            setProperty('title', line, extractedRecords);
-            return;
-        }
-
         if (/^        [^\s]/.test(line)) {
             extractedRecords.push({
                 ...newExtractedRecord(),
@@ -336,6 +324,17 @@ function parseDegewo(data: string[], extractedRecords: ExtractedRecord[]) {
                 urls[extractedRecords.length - 1],
                 extractedRecords
             );
+            return;
+        }
+        if (line.startsWith('    ')) {
+            if (line.includes('|')) {
+                const address = line.trim().replace(' | ', ', ');
+                console.log(line + 'degewo');
+                console.log(address + ' degewo');
+                setProperty('address', address, extractedRecords);
+                return;
+            }
+            setProperty('title', line, extractedRecords);
             return;
         }
 
@@ -394,6 +393,10 @@ function parseStadt_Und_Land(
             // Regex for integer
             if (/\d{5} Berlin/.test(line)) {
                 console.log(line + 'stadt und land');
+                extractedRecords.push({
+                    ...newExtractedRecord(),
+                    address: line,
+                });
                 setProperty('address', line, extractedRecords);
                 return;
             }
