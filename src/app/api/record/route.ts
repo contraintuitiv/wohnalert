@@ -338,16 +338,13 @@ function parseDegewo(data: string[], extractedRecords: ExtractedRecord[]) {
         }
 
         if (line.startsWith('        * ')) {
-            console.log(line);
             if (line.includes('m²')) {
                 const [, size] = line.split('*');
-                console.log(size);
                 setProperty('size', size, extractedRecords);
                 return;
             }
             if (line.includes('Zimmer')) {
                 const [, rooms] = line.split('*');
-                console.log(rooms);
                 setProperty('rooms', rooms, extractedRecords);
                 return;
             }
@@ -361,7 +358,7 @@ function parseDegewo(data: string[], extractedRecords: ExtractedRecord[]) {
         }
         if (line.includes('Warmmiete')) {
             const [, rent] = line.split('Warmmiete:');
-            setProperty('rent', line, extractedRecords);
+            setProperty('rent', rent, extractedRecords);
             return;
         }
         return;
@@ -408,17 +405,14 @@ function parseDegewo2(data: string[], extractedRecords: ExtractedRecord[]) {
             return;
         }
 
-        if (line.startsWith('        * ')) {
-            console.log(line);
+        if (line.startsWith('        * ')
             if (line.includes('m²')) {
                 const [, size] = line.split('*');
-                console.log(size);
                 setProperty('size', size, extractedRecords);
                 return;
             }
             if (line.includes('Zimmer')) {
                 const [, rooms] = line.split('*');
-                console.log(rooms);
                 setProperty('rooms', rooms, extractedRecords);
                 return;
             }
@@ -432,7 +426,7 @@ function parseDegewo2(data: string[], extractedRecords: ExtractedRecord[]) {
         }
         if (line.includes('Warmmiete')) {
             const [, rent] = line.split('Warmmiete:');
-            setProperty('rent', line, extractedRecords);
+            setProperty('rent', rent, extractedRecords);
             return;
         }
         return;
@@ -457,13 +451,10 @@ function parseStadt_Und_Land(
         .filter(line => line.startsWith('    /'))
         .map(line => `https://www.stadtundland.de${line.trim()}`);
 
-    console.log('STADT UND LAND' + urls);
-
     data.filter(line => !line.startsWith(' /')).forEach(line => {
         if (line.startsWith('        ') && !line.startsWith('          ')) {
             // Regex for integer
             if (/\d{5} Berlin/.test(line)) {
-                console.log(line + 'stadt und land');
                 extractedRecords.push({
                     ...newExtractedRecord(),
                     address: line,
@@ -475,41 +466,39 @@ function parseStadt_Und_Land(
                 );
                 setProperty('address', line, extractedRecords);
                 return;
-            } else {
-                line.split(/(?<=Zimmer)|(?<=m²)| – /).forEach(part => {
-                    part = part.trim(); // Trim any extra whitespace
-                    console.log(part + 'stadt und land');
-                    if (part.includes('Zimmer')) {
-                        setProperty('rooms', part, extractedRecords);
-                        return;
-                    }
-
-                    if (part.includes('m²')) {
-                        setProperty('size', part, extractedRecords);
-                        return;
-                    }
-
-                    if (!part.includes('Zimmer') && !part.includes('m²')) {
-                        setProperty('title', part, extractedRecords);
-                        if (
-                            part.includes('kein WBS') ||
-                            part.includes('ohne WBS')
-                        ) {
-                            setProperty('wbs', 'false', extractedRecords);
-                            return;
-                        }
-                        if (
-                            part.includes('mit WBS') ||
-                            part.includes('WBS erforderlich') ||
-                            part.includes('WBS erwünscht')
-                        ) {
-                            setProperty('wbs', 'true', extractedRecords);
-                            return;
-                        }
-                        return;
-                    }
-                });
             }
+            line.split(/(?<=Zimmer)|(?<=m²)| – /).forEach(part => {
+                part = part.trim(); // Trim any extra whitespace
+                if (part.includes('Zimmer')) {
+                    setProperty('rooms', part, extractedRecords);
+                    return;
+                }
+
+                if (part.includes('m²')) {
+                    setProperty('size', part, extractedRecords);
+                    return;
+                }
+
+                if (!part.includes('Zimmer') && !part.includes('m²')) {
+                    setProperty('title', part, extractedRecords);
+                    if (
+                        part.includes('kein WBS') ||
+                        part.includes('ohne WBS')
+                    ) {
+                        setProperty('wbs', 'false', extractedRecords);
+                        return;
+                    }
+                    if (
+                        part.includes('mit WBS') ||
+                        part.includes('WBS erforderlich') ||
+                        part.includes('WBS erwünscht')
+                    ) {
+                        setProperty('wbs', 'true', extractedRecords);
+                        return;
+                    }
+                    return;
+                }
+            });
         }
         if (/Gesamtmiete/.test(line)) {
             const [, rent] = line.split('Gesamtmiete');
