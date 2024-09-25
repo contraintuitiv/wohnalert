@@ -369,7 +369,7 @@ function parseDegewo(data: string[], extractedRecords: ExtractedRecord[]) {
     return extractedRecords;
 }
 
-function parseDegewo(data: string[], extractedRecords: ExtractedRecord[]) {
+function parseDegewo2(data: string[], extractedRecords: ExtractedRecord[]) {
     const setProperty = (
         key: PossibleProperties,
         value: string,
