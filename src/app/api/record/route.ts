@@ -317,32 +317,33 @@ function parseDegewo(data: string[], extractedRecords: ExtractedRecord[]) {
     ).forEach(line => {
         if (line.startsWith('      ')) {
             if (line.includes('|')) {
-                line.trim().replace(' | ', ', ');
+                const address = line.trim().replace(' | ', ', ');
                 extractedRecords.push({
                     ...newExtractedRecord(),
-                    address: line,
+                    address: address,
                 });
-                setProperty('address', line, extractedRecords);
                 setProperty(
                     'url',
                     urls[extractedRecords.length - 1],
                     extractedRecords
                 );
                 return;
-            } else {
-                setProperty('title', line, extractedRecords);
-                return;
             }
+            setProperty('title', line, extractedRecords);
+            return;
         }
 
         if (line.startsWith('        *')) {
+            console.log(line);
             if (line.includes('m²')) {
                 const [, size] = line.split('*');
+                console.log(size);
                 setProperty('size', size, extractedRecords);
                 return;
             }
             if (line.includes('Zimmer')) {
                 const [, rooms] = line.split('*');
+                console.log(rooms);
                 setProperty('rooms', rooms, extractedRecords);
                 return;
             }
@@ -458,6 +459,11 @@ function parseStadt_Und_Land(
                     ...newExtractedRecord(),
                     address: line,
                 });
+                setProperty(
+                    'url',
+                    urls[extractedRecords.length - 1],
+                    extractedRecords
+                );
                 setProperty('address', line, extractedRecords);
                 return;
             } else {
@@ -475,6 +481,7 @@ function parseStadt_Und_Land(
                     }
 
                     if (!part.includes('Zimmer') && !part.includes('m²')) {
+                        setProperty('title', part, extractedRecords);
                         if (
                             part.includes('kein WBS') ||
                             part.includes('ohne WBS')
@@ -490,7 +497,6 @@ function parseStadt_Und_Land(
                             setProperty('wbs', 'true', extractedRecords);
                             return;
                         }
-                        setProperty('title', part, extractedRecords);
                         return;
                     }
                 });
