@@ -311,6 +311,8 @@ function parseDegewo(data: string[], extractedRecords: ExtractedRecord[]) {
         .filter(line => line.startsWith('  /'))
         .map(line => `https://immosuche.degewo.de${line.trim()}`);
 
+    console.log('DEGEWO urLS:' + urls);
+
     data.filter(
         line => !line.endsWith('Merken') && !line.startsWith(' /')
     ).forEach(line => {
@@ -363,6 +365,7 @@ function parseDegewo(data: string[], extractedRecords: ExtractedRecord[]) {
 
         return;
     });
+    console.log('DEGEWO extractedRecords:' + extractedRecords);
 
     return extractedRecords;
 }
@@ -384,10 +387,12 @@ function parseStadt_Und_Land(
         .filter(line => line.startsWith('  /'))
         .map(line => `https://www.stadtundland.de${line.trim()}`);
 
+    console.log('Stadt und Land urLS:' + urls);
+
     data.filter(line => !line.startsWith(' /')).forEach(line => {
         if (line.startsWith('      ')) {
             // Regex for integer
-            if (!/^\d+/.test(line.trim())) {
+            if (/\d{5} Berlin/.test(line)) {
                 setProperty('address', line, extractedRecords);
                 return;
             }
@@ -432,6 +437,7 @@ function parseStadt_Und_Land(
 
         return;
     });
+    console.log('Stadt und Land extractedRecords:' + extractedRecords);
 
     return extractedRecords;
 }
