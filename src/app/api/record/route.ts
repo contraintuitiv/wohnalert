@@ -470,7 +470,8 @@ function parseStadt_Und_Land(
             line.split(/(?<=Zimmer)|(?<=m²)| – /).forEach(part => {
                 part = part.trim(); // Trim any extra whitespace
                 if (part.includes('Zimmer')) {
-                    setProperty('rooms', part, extractedRecords);
+                    const [, rooms] = part.split('Zimmer');
+                    setProperty('rooms', rooms, extractedRecords);
                     return;
                 }
 
