@@ -103,6 +103,8 @@ function parseGewobag(data: string[], extractedRecords: ExtractedRecord[]) {
         extractedRecords[extractedRecords.length - 1][key] = value.trim();
     };
 
+    console.log('GEWO extractedRecords:' + data);
+
     // filter out urls (and with that the co)
     const urls = data
         .filter(line => line.startsWith('    https://www.gewobag.de'))
@@ -243,6 +245,8 @@ function parseHowoge(data: string[], extractedRecords: ExtractedRecord[]) {
         .filter(line => line.startsWith('  /'))
         .map(line => `https://www.howoge.de${line.trim()}`);
 
+    console.log('HOWOGE urLS:' + urls);
+
     data.filter(
         line =>
             !line.endsWith('Auf Karte anzeigen') &&
@@ -290,6 +294,8 @@ function parseHowoge(data: string[], extractedRecords: ExtractedRecord[]) {
                 line.trim()
             );
         }
+
+        console.log('HOWOGE extractedRecords:' + extractedRecords);
 
         return;
     });
