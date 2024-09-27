@@ -21,7 +21,7 @@ export default function Filter({
 }) {
     const { settings, updateSettings } = useSettings();
     const { toast } = useToast();
-
+    console.log(initialBoroughs);
     const [showFilter, setShowFilter] = useState(false);
     const [selectedBoroughs, setSelectedBoroughs] = useState<string[]>(
         settings.filters.boroughs || []

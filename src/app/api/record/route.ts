@@ -9,8 +9,14 @@ import {
 } from '../../../../lib/util';
 import { prisma } from '../../../../lib/prisma';
 import * as Sentry from '@sentry/nextjs';
-import { set } from 'zod';
-
+import {
+    ExtractedRecord,
+    parseDegewo,
+    parseGewobag,
+    parseHowoge,
+    parseStadt_Und_Land,
+    parseWbm,
+} from './parser';
 export async function GET(req: NextRequest) {
     const {
         minRent,
@@ -62,6 +68,7 @@ export async function GET(req: NextRequest) {
     return NextResponse.json([...records]);
 }
 
+const x = parseHowoge;
 //records from changedetection are passed in to prisma
 
 export async function POST(req: NextRequest) {

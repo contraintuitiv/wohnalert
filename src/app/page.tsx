@@ -14,10 +14,9 @@ export default async function Home() {
         },
     });
 
-    console.log(data)
+    console.log(data);
 
-    
-   captureMessage(`boroughs ${data}`);
+    captureMessage(`boroughs data ${data}`);
 
     const boroughs: string[] = data.map(str => str.borough);
 
@@ -25,7 +24,9 @@ export default async function Home() {
         take: 50,
         orderBy: { createdAt: 'desc' },
     });
+    captureMessage(`boroughs boroughs swag yo${data}`);
 
+    console.log(boroughs);
     return (
         <SettingsProvider>
             <RecordsProvider initialRecords={records}>

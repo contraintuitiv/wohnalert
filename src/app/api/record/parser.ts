@@ -1,4 +1,4 @@
-interface ExtractedRecord {
+export interface ExtractedRecord {
     title: string;
     address: string;
     url: string;
@@ -9,7 +9,7 @@ interface ExtractedRecord {
     properties: string[];
 }
 
-function newExtractedRecord(): ExtractedRecord {
+export function newExtractedRecord(): ExtractedRecord {
     return {
         title: '',
         url: '',
@@ -22,7 +22,7 @@ function newExtractedRecord(): ExtractedRecord {
     };
 }
 
-type PossibleProperties =
+export type PossibleProperties =
     | 'title'
     | 'address'
     | 'url'
@@ -31,7 +31,10 @@ type PossibleProperties =
     | 'rooms'
     | 'wbs';
 
-function parseGewobag(data: string[], extractedRecords: ExtractedRecord[]) {
+export function parseGewobag(
+    data: string[],
+    extractedRecords: ExtractedRecord[]
+) {
     const setProperty = (
         key: PossibleProperties,
         value: string,
@@ -99,7 +102,7 @@ function parseGewobag(data: string[], extractedRecords: ExtractedRecord[]) {
     return extractedRecords;
 }
 
-function parseWbm(data: string[], extractedRecords: ExtractedRecord[]) {
+export function parseWbm(data: string[], extractedRecords: ExtractedRecord[]) {
     const setProperty = (key: PossibleProperties, value: string) => {
         extractedRecords[extractedRecords.length - 1][key] = value.trim();
     };
@@ -166,7 +169,10 @@ function parseWbm(data: string[], extractedRecords: ExtractedRecord[]) {
     return extractedRecords;
 }
 
-function parseHowoge(data: string[], extractedRecords: ExtractedRecord[]) {
+export function parseHowoge(
+    data: string[],
+    extractedRecords: ExtractedRecord[]
+) {
     const setProperty = (
         key: PossibleProperties,
         value: string,
@@ -234,7 +240,10 @@ function parseHowoge(data: string[], extractedRecords: ExtractedRecord[]) {
     return extractedRecords;
 }
 
-function parseDegewo(data: string[], extractedRecords: ExtractedRecord[]) {
+export function parseDegewo(
+    data: string[],
+    extractedRecords: ExtractedRecord[]
+) {
     const setProperty = (
         key: PossibleProperties,
         value: string,
@@ -302,7 +311,7 @@ function parseDegewo(data: string[], extractedRecords: ExtractedRecord[]) {
     return extractedRecords;
 }
 
-function parseStadt_Und_Land(
+export function parseStadt_Und_Land(
     data: string[],
     extractedRecords: ExtractedRecord[]
 ) {
