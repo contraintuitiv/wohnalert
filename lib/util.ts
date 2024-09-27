@@ -78,7 +78,7 @@ ${record.road} ${record.house_number}\n\n`
 
   for (const property of JSON.parse(record.properties)) output += `*${property} `
 
-  output += `\n\nAuf der Karte: ${osmLink(record.lat, record.long)}\n\n\n\n`
+  output += `\n\nAuf der Karte: https://wohnalert.freizeitstress.org/${record.id}}\n\n\n\n`
 
   return output
 }
@@ -89,23 +89,23 @@ export const deconstructFilterQuery = (reqUrl: string) => {
   const outputFormat = url.searchParams.get("output")
 
   const numberFromQuery = (key: string) => {
-      let queryVar;
-      if (queryVar = url.searchParams.get(key)) {
-          if (parseInt(queryVar)) {
-              return parseInt(queryVar)
-          }
+    let queryVar;
+    if (queryVar = url.searchParams.get(key)) {
+      if (parseInt(queryVar)) {
+        return parseInt(queryVar)
       }
+    }
 
-      return undefined
+    return undefined
   }
 
   const arrayFromQuery = (key: string) => {
-      let queryVar;
-      if (queryVar = url.searchParams.get(key)) {
-          return queryVar.split(",")
-      }
+    let queryVar;
+    if (queryVar = url.searchParams.get(key)) {
+      return queryVar.split(",")
+    }
 
-      return []
+    return []
   }
 
   const minRent = numberFromQuery("minRent") || 1

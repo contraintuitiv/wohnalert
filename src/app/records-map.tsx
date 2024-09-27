@@ -5,7 +5,7 @@ import 'leaflet/dist/leaflet.css';
 import L from 'leaflet';
 import { Record } from '@prisma/client';
 import { useRecords } from '@/context/records-context';
-import { mockRecords } from './util/mockRecords';
+import { MutableRefObject, useEffect, useRef } from 'react';
 
 const createCustomIcon = (isHovered: boolean) => {
     const markerColor = isHovered ? '#3cb371' : '#FF6E6E';
@@ -41,25 +41,27 @@ const createCustomIcon = (isHovered: boolean) => {
     });
 };
 
-function MapController({ center }: { center: [number, number] }) {
+function MapController({ center, markerRef }: { center: [number, number], markerRef: MutableRefObject<null> }) {
     const map = useMap(); // Get access to the map object
 
-    if (center) {
-        map.setView(center, 13); // Set the new view at zoom level 13
-    }
+    useEffect(() => {
+        if (center && markerRef.current) {
+            //@ts-ignore
+            markerRef.current.openPopup(); // Open the popup for the current record
+        }
+    }, [center, map, markerRef]);
 
-    return null; // This component does not render anything
+    return null;
 }
 
 export default function RecordsMap({
-    hoveredRecordId,
-    centerCoords,
+    currentRecord
 }: {
-    hoveredRecordId: number | null;
-    centerCoords: [number, number] | null;
+    currentRecord?: Record | null;
 }) {
     const { records } = useRecords();
     // const records = mockRecords;
+    const markerRef = useRef(null)
 
     return (
         <MapContainer
@@ -72,13 +74,14 @@ export default function RecordsMap({
                 attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
                 url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
             />
-            {centerCoords && <MapController center={centerCoords} />}
             {records &&
                 records.map(record => (
+
                     <Marker
                         position={[record.lat, record.long]}
-                        icon={createCustomIcon(record.id === hoveredRecordId)}
+                        icon={createCustomIcon(record.id === currentRecord?.id)}
                         key={record.id}
+                        ref={record.id === currentRecord?.id ? markerRef : null}
                     >
                         <Popup>
                             <a
@@ -103,6 +106,8 @@ export default function RecordsMap({
                         </Popup>
                     </Marker>
                 ))}
+
+            {currentRecord && <MapController center={[currentRecord.lat, currentRecord.long]} markerRef={markerRef} />}
         </MapContainer>
     );
 }

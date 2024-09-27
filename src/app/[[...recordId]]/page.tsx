@@ -1,28 +1,17 @@
 import { RecordsProvider } from '@/context/records-context';
-import { prisma } from '../../lib/prisma';
-import RecordsMap from './records-map';
-import RecordsTable from './records-table';
+import { prisma } from '../../../lib/prisma';
+import RecordsMap from '../records-map';
+import RecordsTable from '../records-table';
 import { SettingsProvider } from '@/context/settings-context';
-import Filter from './filter';
+import Filter from '../filter';
 import { captureMessage } from '@sentry/nextjs';
 
-export default async function Home() {
-    // const data = await prisma.record.findMany({
-    //     // distinct: ['borough'],
-    //     select: {
-    //         borough: true,
-    //     },
-    // });
-
+export default async function Home({ params }: { params: { recordId: string[] } }) {
 
     const records = await prisma.record.findMany({
         take: 50,
         orderBy: { createdAt: 'desc' },
     });
-
-
-    // const boroughs: string[] = [...new Set(records.map(str => str.borough))];
-    
 
     return (
         <SettingsProvider>
@@ -32,7 +21,7 @@ export default async function Home() {
                         <Filter />
                     </div>
                     <div>
-                        <RecordsTable />
+                        <RecordsTable recordId={parseInt(params.recordId?.[0])} />
                     </div>
                 </main>
             </RecordsProvider>

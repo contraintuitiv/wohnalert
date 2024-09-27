@@ -9,44 +9,43 @@ import {
     TableHeader,
     TableRow,
 } from '@/components/ui/table';
-import { osmLink } from '../../lib/util';
 import { Watch, Watches } from './api/watch/route';
 import useSWR from 'swr';
 import { fetchJson } from '../../lib/fetch';
 import { useRecords } from '@/context/records-context';
-import { useRef, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import RecordsMap from './records-map';
-import { mockRecords } from './util/mockRecords';
+import { Record } from '@prisma/client';
 
-export default function RecordsTable() {
+export default function RecordsTable({ recordId }: { recordId?: number }) {
     const { records } = useRecords();
-    // const records = mockRecords;
+
     const { data: watchesObject } = useSWR('/api/watch', fetchJson<Watches>);
-    const [hoveredRecordId, setHoveredRecordId] = useState<number | null>(null);
+    const [currentRecord, setCurrentRecord] = useState<Record | null>(null);
     const [backgroundSelected, setBackgroundSelected] = useState<number | null>(
         null
     );
-    const [centerCoords, setCenterCoords] = useState<[number, number] | null>(
-        null
-    );
+
 
     const mapRef = useRef<HTMLDivElement>(null);
-
-    const handleCenterMap = (lat: number, long: number) => {
-        // Scroll the page to the map container
-        if (mapRef.current) {
-            mapRef.current.scrollIntoView({ behavior: 'smooth' });
-        }
-
-        // Set the coordinates to center the map
-        setCenterCoords([lat, long]);
-    };
 
     const watches: Watch[] = [];
     if (watchesObject) {
         for (const key of Object.keys(watchesObject)) {
             watches.push(watchesObject[key]);
         }
+    }
+
+    useEffect(() => {
+        if (recordId && records) {
+            const currentRecord = records.find(record => record.id === recordId)
+            if (currentRecord) setCurrentRecord(currentRecord)
+        }
+    }, [recordId, records])
+
+    const handleRecordClick = (record: Record) => {
+        setCurrentRecord(record);
+        setBackgroundSelected(record.id);
     }
 
     return (
@@ -56,8 +55,7 @@ export default function RecordsTable() {
                 className="sticky top-0 p-4 left-0 right-0 z-10 bg-white w-full overflow-hidden max-h-[50vh] mb-2"
             >
                 <RecordsMap
-                    hoveredRecordId={hoveredRecordId}
-                    centerCoords={centerCoords}
+                    currentRecord={currentRecord}
                 />
             </div>
             {/* Responsive table for mobile and desktop */}
@@ -99,10 +97,7 @@ export default function RecordsTable() {
                         {records?.map(record => (
                             <TableRow
                                 key={record.id}
-                                onMouseEnter={() => {
-                                    setHoveredRecordId(record.id);
-                                }}
-                                onMouseLeave={() => setHoveredRecordId(null)}
+                                onClick={() => handleRecordClick(record)}
                                 className="hover:bg-gray-100"
                             >
                                 <TableCell className="hidden sm:table-cell">
@@ -119,26 +114,18 @@ export default function RecordsTable() {
                                     </a>
                                 </TableCell>
                                 <TableCell
-                                    title={`${record.road} ${
-                                        record.house_number
-                                    } - ${record.borough}${
-                                        record.suburb ? `, ` : ''
-                                    }${record.suburb}${
-                                        record.neighbourhood ? `, ` : ''
-                                    }${record.neighbourhood}`}
+                                    title={`${record.road} ${record.house_number
+                                        } - ${record.borough}${record.suburb ? `, ` : ''
+                                        }${record.suburb}${record.neighbourhood ? `, ` : ''
+                                        }${record.neighbourhood}`}
                                 >
                                     {record.borough ||
                                         record.suburb ||
                                         record.neighbourhood}{' '}
                                     &#128712;{' '}
                                     <a
-                                        onClick={() => {
-                                            handleCenterMap(
-                                                record.lat,
-                                                record.long
-                                            );
-                                            setHoveredRecordId(record.id);
-                                        }}
+
+                                        onClick={() => handleRecordClick(record)}
                                         className="text-blue-500 hover:underline cursor-pointer"
                                     >
                                         &#128205; Zur Karte
@@ -154,9 +141,11 @@ export default function RecordsTable() {
                                     {record.rooms}
                                 </TableCell>
                                 <TableCell className="hidden sm:table-cell">
-                                    {new Date(
-                                        record.createdAt
-                                    ).toLocaleDateString()}
+                                    {new Date(record.createdAt).toLocaleDateString() === new Date().toLocaleDateString()
+                                        ? new Date(record.createdAt).toLocaleTimeString('de-DE', { hour: "2-digit", minute: "2-digit" })
+                                        : new Date(
+                                            record.createdAt
+                                        ).toLocaleDateString('de-DE', { day: '2-digit', month: '2-digit', hour: '2-digit', minute: '2-digit' })}
                                 </TableCell>
                             </TableRow>
                         ))}
@@ -169,15 +158,9 @@ export default function RecordsTable() {
                 {records?.map(record => (
                     <div
                         key={record.id}
-                        className={`mb-4 p-4 border rounded-lg hover:bg-gray-100 ${
-                            record.id == backgroundSelected ? 'bg-gray-200' : ''
-                        } text-sm`}
-                        onMouseEnter={() => setHoveredRecordId(record.id)}
-                        onMouseLeave={() => setHoveredRecordId(null)}
-                        onClick={() => {
-                            setHoveredRecordId(record.id);
-                            setBackgroundSelected(record.id);
-                        }}
+                        className={`mb-4 p-4 border rounded-lg hover:bg-gray-100 ${record.id === backgroundSelected ? 'bg-gray-200' : ''
+                            } text-sm`}
+                        onClick={() => handleRecordClick(record)}
                     >
                         <h3 className="text-base">
                             <a
@@ -193,14 +176,11 @@ export default function RecordsTable() {
                             {record.borough ||
                                 record.suburb ||
                                 record.neighbourhood}{' '}
-                            | {record.landlord} | {record.rent} € | 
+                            | {record.landlord} | {record.rent} € |
                             {record.size} m² | {record.rooms} Zimmer |
                             {new Date(record.createdAt).toLocaleDateString()} |
                             <a
-                                onClick={() => {
-                                    handleCenterMap(record.lat, record.long);
-                                    setHoveredRecordId(record.id);
-                                }}
+                                onClick={() => handleRecordClick(record)}
                                 className="text-blue-500 hover:underline cursor-pointer"
                             >
                                 &#128205; Zur Karte
