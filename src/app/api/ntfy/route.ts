@@ -3,6 +3,7 @@ import { Ntfy, NtfyCreateInputSchema } from '../../../../prisma/generated/zod';
 import { ZodError } from 'zod';
 import { prisma } from '../../../../lib/prisma';
 import { deconstructFilterQuery } from '../../../../lib/util';
+import validator from 'validator';
 
 export async function GET(req: NextRequest) {
     const { minRent, maxRent, minRooms, maxRooms, minSize, maxSize, boroughs } =
@@ -34,6 +35,15 @@ export async function GET(req: NextRequest) {
 
 export async function POST(req: NextRequest): Promise<NextResponse> {
     const body = (await req.json()) as Partial<Ntfy>;
+
+    if (!body.topic || (body.topic && !validator.isLength(body.topic, { min: 3, max: 50 }))) {
+        return new NextResponse(
+            'topic must be min 3; max 50',
+            {
+                status: 400,
+            }
+        );
+    }
 
     try {
         // validate

@@ -29,7 +29,7 @@ export default function Filter() {
         'Tempelhof-Schöneberg',
         'Treptow-Köpenick',
         'Steglitz-Zehlendorf'
-      ]
+    ]
 
 
     const { settings, updateSettings } = useSettings();
@@ -39,6 +39,7 @@ export default function Filter() {
     const [selectedBoroughs, setSelectedBoroughs] = useState<string[]>(
         settings.filters.boroughs || []
     );
+    const [topic, setTopic] = useState("")
     const [maxRent, setMaxRent] = useState(settings.filters.maxRent);
     const [minSize, setMinSize] = useState(settings.filters.minSize);
     const [minRooms, setMinRooms] = useState(settings.filters.minRooms);
@@ -56,7 +57,7 @@ export default function Filter() {
     useEffect(() => {
         localStorage.setItem('showFilter', JSON.stringify(showFilter));
     }, [showFilter]);
- 
+
     const allBoroughsChecked =
         !settings.filters.boroughs ||
         settings.filters.boroughs.length === initialBoroughs.length ||
@@ -181,7 +182,7 @@ export default function Filter() {
         minSize !== settings.filters.minSize ||
         minRooms !== settings.filters.minRooms ||
         selectedBoroughs.sort().toString() !==
-            settings.filters.boroughs?.sort().toString();
+        settings.filters.boroughs?.sort().toString();
 
     // Apply filters when the user clicks the button
     const updateFilters = () => {
@@ -221,6 +222,7 @@ export default function Filter() {
             ...settings.filters,
             boroughs: JSON.stringify(settings.filters.boroughs),
             landlords: '[]',
+            topic: topic
         };
         await fetch('/api/ntfy', {
             method: 'POST',
@@ -438,15 +440,7 @@ export default function Filter() {
                     </div>
 
                     <div className="mt-1">
-                        <div>
-                            <Alert
-                                variant="destructive"
-                                className="mb-2 mt-2 md:mt-0"
-                            >
-                                Gefilterte Push-Notifications funktionieren noch
-                                nicht (zuverlässig)
-                            </Alert>
-                        </div>
+
                         {!changedParameters &&
                             (ntfy ? (
                                 <div className="flex-col">
@@ -454,7 +448,7 @@ export default function Filter() {
                                         Push-Benachrichtigung (via {ntfy.host}):{' '}
                                         <b>
                                             <a
-                                                href={`ntfy://${ntfy.host}/${ntfy.id}`}
+                                                href={`ntfy://${ntfy.host}/${ntfy.topic || ntfy.id}`}
                                                 className="hover:underline"
                                                 title="direkt in ntfy.sh-App öffnen"
                                             >
@@ -469,7 +463,7 @@ export default function Filter() {
                                         <Button
                                             onClick={() =>
                                                 handleCopyToClipBoardClick(
-                                                    ntfy.id
+                                                    ntfy.topic || ntfy.id
                                                 )
                                             }
                                             variant={'outline'}
@@ -494,14 +488,25 @@ export default function Filter() {
                                     </div>
                                 </div>
                             ) : (
-                                <Button
-                                    className="px-2"
-                                    onClick={handleAddNtfyClick}
-                                >
-                                    🔔 Push-Notification für diesen Filter
-                                    erstellen
-                                </Button>
-                            ))}
+                                <div className='flex gap-2 flex-col'>
+                                    <Input
+                                        type='text'
+                                        value={topic}
+                                        onChange={(e) => setTopic(e.target.value)}
+                                        placeholder='Filter-Name'
+                                        maxLength={50}
+                                        minLength={3}
+                                    />
+                                    <Button
+                                        className="px-2"
+                                        onClick={handleAddNtfyClick}
+                                        disabled={topic.length < 3 || topic.length > 50}
+                                    >
+                                        🔔 Push-Notification für diesen Filter
+                                        erstellen
+                                    </Button>
+                                </div>)
+                            )}
                     </div>
                 </div>
             )}

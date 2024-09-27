@@ -17,6 +17,7 @@ import {
     parseStadt_Und_Land,
     parseWbm,
 } from './parser';
+import { sendNtfys } from './ntfy';
 export async function GET(req: NextRequest) {
     const {
         minRent,
@@ -70,6 +71,7 @@ export async function GET(req: NextRequest) {
 
 const x = parseHowoge;
 //records from changedetection are passed in to prisma
+
 
 export async function POST(req: NextRequest) {
     // via body the UUID is passed as raw text
@@ -126,11 +128,14 @@ export async function POST(req: NextRequest) {
     for (const record of extractedRecords) {
         try {
             // try to find the record
-            await prisma.record.findFirstOrThrow({
+            const foundRecord = await prisma.record.findFirstOrThrow({
                 where: {
                     url: record.url,
                 },
             });
+
+
+            sendNtfys(foundRecord)
         } catch {
             // if not, create new record
 
@@ -156,101 +161,7 @@ export async function POST(req: NextRequest) {
                 },
             });
 
-            // read out which notifications want this record
-            const ntfys = await prisma.ntfy.findMany({
-                select: {
-                    id: true,
-                    host: true,
-                    topic: true,
-                },
-                where: {
-                    AND: [
-                        {
-                            OR: [
-                                { minRent: null },
-                                { minRent: { lte: createdRecord.rent } },
-                            ],
-                        },
-                        {
-                            OR: [
-                                { maxRent: null },
-                                { maxRent: { gte: createdRecord.rent } },
-                            ],
-                        },
-                        {
-                            OR: [
-                                { minRooms: null },
-                                { minRooms: { lte: createdRecord.rooms } },
-                            ],
-                        },
-                        {
-                            OR: [
-                                { maxRooms: null },
-                                { maxRooms: { gte: createdRecord.rooms } },
-                            ],
-                        },
-                        {
-                            OR: [
-                                { minSize: null },
-                                { minSize: { lte: createdRecord.size } },
-                            ],
-                        },
-                        {
-                            OR: [
-                                { maxSize: null },
-                                { maxSize: { gte: createdRecord.size } },
-                            ],
-                        },
-                        {
-                            OR: [
-                                { boroughs: null },
-                                {
-                                    boroughs: {
-                                        contains: createdRecord.borough,
-                                    },
-                                },
-                            ],
-                        },
-                        {
-                            OR: [
-                                { landlords: null },
-                                {
-                                    landlords: {
-                                        contains: createdRecord.landlord,
-                                    },
-                                },
-                            ],
-                        },
-                    ],
-                },
-            });
-            const createdRecordAsText = recordAsText(createdRecord);
-
-            Sentry.captureMessage(
-                `loaded following ntfys ${JSON.stringify(
-                    ntfys
-                )}, the createdRecord was ${createdRecordAsText}`
-            );
-
-            // send notifications
-            for (const ntfy of ntfys) {
-                await fetch(
-                    `https://${ntfy.host || process.env.NTFY_HOST}/${
-                        ntfy.topic || ntfy.id
-                    }`,
-                    {
-                        method: 'POST',
-                        body: createdRecordAsText,
-                    }
-                );
-                Sentry.captureMessage(
-                    `Sent ${createdRecord.id}/${
-                        createdRecord.description
-                    } to https://${ntfy.host || process.env.NTFY_HOST}/${
-                        ntfy.topic || ntfy.id
-                    }`
-                );
-            }
+            sendNtfys(createdRecord)
         }
     }
 
