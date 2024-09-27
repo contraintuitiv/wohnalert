@@ -362,23 +362,6 @@ export default function Filter({
                                     <Label htmlFor={borough}>{borough}</Label>
                                 </div>
                             ))}
-                                                        {initialBoroughsFetched.map(borough => (
-                                <div
-                                    key={borough}
-                                    className="flex items-center space-x-2"
-                                >
-                                    <Checkbox
-                                        id={borough}
-                                        checked={selectedBoroughs.includes(
-                                            borough
-                                        )}
-                                        onClick={() =>
-                                            handleBoroughClick(borough)
-                                        }
-                                    />
-                                    <Label htmlFor={borough}>{borough}</Label>
-                                </div>
-                            ))}
                             <div>
                                 <Checkbox
                                     id="alle"

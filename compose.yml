@@ -8,4 +8,4 @@ services:
     ports:
       - "${DOCKER_PORT}:4541"
     volumes:
-      - /home/apps/database/wohnalert/records.db:/app/prisma/records.db
+      - /home/vale/devel/nextjs/wohnalert/prisma/records.db:/app/prisma/records.db

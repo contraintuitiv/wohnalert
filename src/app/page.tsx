@@ -8,17 +8,14 @@ import { captureMessage } from '@sentry/nextjs';
 
 export default async function Home() {
     const data = await prisma.record.findMany({
-        distinct: ['borough'],
+        // distinct: ['borough'],
         select: {
             borough: true,
         },
     });
 
-    console.log(data);
 
-    captureMessage(`boroughs data ${data}`);
-
-    const boroughs: string[] = data.map(str => str.borough);
+    const boroughs: string[] = [...new Set(data.map(str => str.borough))];
 
     const records = await prisma.record.findMany({
         take: 50,
