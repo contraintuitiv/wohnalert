@@ -14,19 +14,26 @@ import { useToast } from '@/components/ui/use-toast';
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
 import TutorialModal from '@/components/ui/tutorialModal';
 
-export default function Filter({
-    initialBoroughs,
-    initialRecords,
-}: {
-    initialBoroughs: string[];
-    initialRecords: Record[];
-}) {
+export default function Filter() {
+
+    const initialBoroughs = [
+        'Friedrichshain-Kreuzberg',
+        'Pankow',
+        'Mitte',
+        'Lichtenberg',
+        'Neukölln',
+        'Charlottenburg-Wilmersdorf',
+        'Reinickendorf',
+        'Spandau',
+        'Marzahn-Hellersdorf',
+        'Tempelhof-Schöneberg',
+        'Treptow-Köpenick',
+        'Steglitz-Zehlendorf'
+      ]
+
+
     const { settings, updateSettings } = useSettings();
     const { toast } = useToast();
-    console.log(initialBoroughs);
-    console.log(initialRecords);
-
-
 
     const [showFilter, setShowFilter] = useState(false);
     const [selectedBoroughs, setSelectedBoroughs] = useState<string[]>(
@@ -49,21 +56,7 @@ export default function Filter({
     useEffect(() => {
         localStorage.setItem('showFilter', JSON.stringify(showFilter));
     }, [showFilter]);
-
-    
-    const [initialBoroughsFetched, setInitialBoroughsFetched] = useState([])
-
-    useEffect(() => {
-        const loadInitialBoroughs = async () => {
-            const data = await fetch('/api/initial-boroughs')
-            const response = await data.json()
-
-            setInitialBoroughsFetched(response)
-        }
-
-        loadInitialBoroughs()
-    }, [])
-
+ 
     const allBoroughsChecked =
         !settings.filters.boroughs ||
         settings.filters.boroughs.length === initialBoroughs.length ||

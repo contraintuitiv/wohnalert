@@ -7,12 +7,12 @@ import Filter from './filter';
 import { captureMessage } from '@sentry/nextjs';
 
 export default async function Home() {
-    const data = await prisma.record.findMany({
-        // distinct: ['borough'],
-        select: {
-            borough: true,
-        },
-    });
+    // const data = await prisma.record.findMany({
+    //     // distinct: ['borough'],
+    //     select: {
+    //         borough: true,
+    //     },
+    // });
 
 
     const records = await prisma.record.findMany({
@@ -21,20 +21,15 @@ export default async function Home() {
     });
 
 
-    const boroughs: string[] = [...new Set(records.map(str => str.borough))];
+    // const boroughs: string[] = [...new Set(records.map(str => str.borough))];
+    
 
-    captureMessage(`boroughs boroughs swag yo${data}`);
-
-    console.log(boroughs);
     return (
         <SettingsProvider>
             <RecordsProvider initialRecords={records}>
                 <main>
                     <div className="px-4 sm:p-6">
-                        <Filter
-                            initialBoroughs={boroughs}
-                            initialRecords={records}
-                        />
+                        <Filter />
                     </div>
                     <div>
                         <RecordsTable />
