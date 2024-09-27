@@ -78,7 +78,7 @@ ${record.road} ${record.house_number}\n\n`
 
   for (const property of JSON.parse(record.properties)) output += `*${property} `
 
-  output += `\n\nAuf der Karte: https://wohnalert.freizeitstress.org/${record.id}}\n\n\n\n`
+  output += `\n\nAuf der Karte: https://wohnalert.freizeitstress.org/${record.id}\n\n\n\n`
 
   return output
 }
