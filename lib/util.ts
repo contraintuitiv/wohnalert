@@ -118,3 +118,11 @@ export const deconstructFilterQuery = (reqUrl: string) => {
 
   return ({ minRent, maxRent, minRooms, maxRooms, minSize, maxSize, boroughs, outputFormat })
 }
+
+export const niceDate = (date: Date) => {
+  const uglyDate = new Date(date)
+
+  return uglyDate.toLocaleDateString() === new Date().toLocaleDateString()
+    ? uglyDate.toLocaleTimeString('de-DE', { hour: "2-digit", minute: "2-digit" })
+    : uglyDate.toLocaleDateString('de-DE', { day: '2-digit', month: '2-digit', hour: '2-digit', minute: '2-digit' })
+}

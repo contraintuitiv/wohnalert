@@ -16,6 +16,7 @@ import { useRecords } from '@/context/records-context';
 import { useEffect, useRef, useState } from 'react';
 import RecordsMap from './records-map';
 import { Record } from '@prisma/client';
+import { niceDate } from '../../lib/util';
 
 export default function RecordsTable({ recordId }: { recordId?: number }) {
     const { records } = useRecords();
@@ -141,11 +142,7 @@ export default function RecordsTable({ recordId }: { recordId?: number }) {
                                     {record.rooms}
                                 </TableCell>
                                 <TableCell className="hidden sm:table-cell">
-                                    {new Date(record.createdAt).toLocaleDateString() === new Date().toLocaleDateString()
-                                        ? new Date(record.createdAt).toLocaleTimeString('de-DE', { hour: "2-digit", minute: "2-digit" })
-                                        : new Date(
-                                            record.createdAt
-                                        ).toLocaleDateString('de-DE', { day: '2-digit', month: '2-digit', hour: '2-digit', minute: '2-digit' })}
+                                    {niceDate(record.createdAt)}
                                 </TableCell>
                             </TableRow>
                         ))}
@@ -176,9 +173,7 @@ export default function RecordsTable({ recordId }: { recordId?: number }) {
                             {record.borough ||
                                 record.suburb ||
                                 record.neighbourhood}{' '}
-                            | {record.landlord} | {record.rent} € |
-                            {record.size} m² | {record.rooms} Zimmer |
-                            {new Date(record.createdAt).toLocaleDateString()} |
+                            | {record.landlord} | {record.rent} € | {record.size} m² | {record.rooms} Zimmer | {niceDate(record.createdAt)} |
                             <a
                                 onClick={() => handleRecordClick(record)}
                                 className="text-blue-500 hover:underline cursor-pointer"

@@ -37,7 +37,7 @@ export default function Filter() {
 
     const [showFilter, setShowFilter] = useState(false);
     const [selectedBoroughs, setSelectedBoroughs] = useState<string[]>(
-        settings.filters.boroughs || []
+        settings.filters.boroughs || initialBoroughs
     );
     const [topic, setTopic] = useState("")
     const [maxRent, setMaxRent] = useState(settings.filters.maxRent);
@@ -58,10 +58,7 @@ export default function Filter() {
         localStorage.setItem('showFilter', JSON.stringify(showFilter));
     }, [showFilter]);
 
-    const allBoroughsChecked =
-        !settings.filters.boroughs ||
-        settings.filters.boroughs.length === initialBoroughs.length ||
-        settings.filters.boroughs.length === 0;
+    const allBoroughsChecked = selectedBoroughs.length === initialBoroughs.length;
 
     // Handle borough checkbox click
     const handleBoroughClick = (borough: string) => {
@@ -73,6 +70,10 @@ export default function Filter() {
             }
         });
     };
+
+    useEffect(() => {
+        if (selectedBoroughs.length === 0) setSelectedBoroughs(initialBoroughs)
+    }, [selectedBoroughs, initialBoroughs])
 
     const steps: JSX.Element[] = [
         <div key="step-1">Step 1: Add new Topic</div>,
@@ -316,7 +317,7 @@ export default function Filter() {
                 >
                     {showFilter ? '▲' : '▼'} Filter{' '}
                     <span className="text-gray-500 text-sm">
-                        {settings.filters.boroughs?.join(', ')}
+                        {allBoroughsChecked ? "" : settings.filters.boroughs?.join(', ')}
                         {maxRent ? ` - max. ${maxRent}€` : ''}
                         {minSize ? ` - min. ${minSize}m²` : ''}
                         {minRooms && minRooms > 0
@@ -357,20 +358,20 @@ export default function Filter() {
                                     <Label htmlFor={borough}>{borough}</Label>
                                 </div>
                             ))}
-                            <div>
+
+                            <div
+                                className="flex items-center space-x-2"
+                            >
                                 <Checkbox
                                     id="alle"
                                     checked={allBoroughsChecked}
-                                    onClick={() => {
-                                        setSelectedBoroughs(
-                                            allBoroughsChecked
-                                                ? []
-                                                : initialBoroughs
-                                        );
-                                    }}
+                                    onClick={() =>
+                                        setSelectedBoroughs(initialBoroughs)
+                                    }
                                 />
                                 <Label htmlFor="alle">alle</Label>
                             </div>
+
                         </div>
                     </div>
                     <div className="flex flex-col space-y-2">
