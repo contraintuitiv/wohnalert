@@ -7,6 +7,7 @@ export default function TestComponent({
     initialBoroughs: string[];
     initialRecords: Record[];
 }) {
+    console.log("TESTCOMPPPPPPP")
     console.log("testcomp boroughs", initialBoroughs);
     console.log("testcomp records", initialRecords);
 
