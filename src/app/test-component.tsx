@@ -1,5 +1,3 @@
-'use client';
-
 import { Record } from '@prisma/client';
 
 export default function TestComponent({
