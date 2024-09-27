@@ -4,6 +4,7 @@ import RecordsMap from './records-map';
 import RecordsTable from './records-table';
 import { SettingsProvider } from '@/context/settings-context';
 import Filter from './filter';
+import { captureMessage } from '@sentry/nextjs';
 
 export default async function Home() {
     const data = await prisma.record.findMany({
@@ -12,6 +13,11 @@ export default async function Home() {
             borough: true,
         },
     });
+
+    console.log(data)
+
+    
+   captureMessage(`boroughs ${data}`);
 
     const boroughs: string[] = data.map(str => str.borough);
 
