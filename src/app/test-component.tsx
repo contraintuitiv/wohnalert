@@ -10,5 +10,5 @@ export default function TestComponent({
     console.log("testcomp boroughs", initialBoroughs);
     console.log("testcomp records", initialRecords);
 
-    return <>Test</>
+    return <>Testkomponente {JSON.stringify(initialBoroughs)}</>
 }
