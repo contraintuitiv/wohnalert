@@ -25,6 +25,9 @@ export default function Filter({
     const { toast } = useToast();
     console.log(initialBoroughs);
     console.log(initialRecords);
+
+
+
     const [showFilter, setShowFilter] = useState(false);
     const [selectedBoroughs, setSelectedBoroughs] = useState<string[]>(
         settings.filters.boroughs || []
@@ -46,6 +49,20 @@ export default function Filter({
     useEffect(() => {
         localStorage.setItem('showFilter', JSON.stringify(showFilter));
     }, [showFilter]);
+
+    
+    const [initialBoroughsFetched, setInitialBoroughsFetched] = useState([])
+
+    useEffect(() => {
+        const loadInitialBoroughs = async () => {
+            const data = await fetch('/api/initial-boroughs')
+            const response = await data.json()
+
+            setInitialBoroughsFetched(response)
+        }
+
+        loadInitialBoroughs()
+    }, [])
 
     const allBoroughsChecked =
         !settings.filters.boroughs ||
@@ -329,6 +346,23 @@ export default function Filter({
                         Bezirke:{' '}
                         <div>
                             {initialBoroughs.map(borough => (
+                                <div
+                                    key={borough}
+                                    className="flex items-center space-x-2"
+                                >
+                                    <Checkbox
+                                        id={borough}
+                                        checked={selectedBoroughs.includes(
+                                            borough
+                                        )}
+                                        onClick={() =>
+                                            handleBoroughClick(borough)
+                                        }
+                                    />
+                                    <Label htmlFor={borough}>{borough}</Label>
+                                </div>
+                            ))}
+                                                        {initialBoroughsFetched.map(borough => (
                                 <div
                                     key={borough}
                                     className="flex items-center space-x-2"

@@ -5,7 +5,6 @@ import RecordsTable from './records-table';
 import { SettingsProvider } from '@/context/settings-context';
 import Filter from './filter';
 import { captureMessage } from '@sentry/nextjs';
-import TestComponent from './test-component';
 
 export default async function Home() {
     const data = await prisma.record.findMany({
@@ -34,10 +33,6 @@ export default async function Home() {
                 <main>
                     <div className="px-4 sm:p-6">
                         <Filter
-                            initialBoroughs={boroughs}
-                            initialRecords={records}
-                        />
-                        <TestComponent
                             initialBoroughs={boroughs}
                             initialRecords={records}
                         />
