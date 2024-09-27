@@ -15,12 +15,14 @@ export default async function Home() {
     });
 
 
-    const boroughs: string[] = [...new Set(data.map(str => str.borough))];
-
     const records = await prisma.record.findMany({
         take: 50,
         orderBy: { createdAt: 'desc' },
     });
+
+
+    const boroughs: string[] = [...new Set(records.map(str => str.borough))];
+
     captureMessage(`boroughs boroughs swag yo${data}`);
 
     console.log(boroughs);
