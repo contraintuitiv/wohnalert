@@ -7,7 +7,7 @@ import { Label } from '@/components/ui/label';
 import { Settings, useSettings } from '@/context/settings-context';
 import { useCallback, useEffect, useState } from 'react';
 import { isNumeric } from 'validator';
-import { Ntfy, Prisma } from '@prisma/client';
+import { Ntfy, Prisma, Record } from '@prisma/client';
 import { filtersToQueryString } from '../../lib/util';
 import { fetchJson } from '../../lib/fetch';
 import { useToast } from '@/components/ui/use-toast';
@@ -16,12 +16,15 @@ import TutorialModal from '@/components/ui/tutorialModal';
 
 export default function Filter({
     initialBoroughs,
+    initialRecords,
 }: {
     initialBoroughs: string[];
+    initialRecords: Record[];
 }) {
     const { settings, updateSettings } = useSettings();
     const { toast } = useToast();
     console.log(initialBoroughs);
+    console.log(initialRecords);
     const [showFilter, setShowFilter] = useState(false);
     const [selectedBoroughs, setSelectedBoroughs] = useState<string[]>(
         settings.filters.boroughs || []
