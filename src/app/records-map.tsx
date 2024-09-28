@@ -96,7 +96,7 @@ export default function RecordsMap({
                             </a>
                             <br />
                             <br />
-                            {record.rent}€ | {record.rooms} Zimmer |{' '}
+                            {record.rent}€ | {record.rooms} Zimmer | {' '}
                             {record.size}m²
                             <br />
                             {record.road} {record.house_number}

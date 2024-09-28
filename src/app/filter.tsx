@@ -14,24 +14,22 @@ import { useToast } from '@/components/ui/use-toast';
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
 import TutorialModal from '@/components/ui/tutorialModal';
 
+export const initialBoroughs = [
+    'Friedrichshain-Kreuzberg',
+    'Pankow',
+    'Mitte',
+    'Lichtenberg',
+    'Neukölln',
+    'Charlottenburg-Wilmersdorf',
+    'Reinickendorf',
+    'Spandau',
+    'Marzahn-Hellersdorf',
+    'Tempelhof-Schöneberg',
+    'Treptow-Köpenick',
+    'Steglitz-Zehlendorf'
+]
+
 export default function Filter() {
-
-    const initialBoroughs = [
-        'Friedrichshain-Kreuzberg',
-        'Pankow',
-        'Mitte',
-        'Lichtenberg',
-        'Neukölln',
-        'Charlottenburg-Wilmersdorf',
-        'Reinickendorf',
-        'Spandau',
-        'Marzahn-Hellersdorf',
-        'Tempelhof-Schöneberg',
-        'Treptow-Köpenick',
-        'Steglitz-Zehlendorf'
-    ]
-
-
     const { settings, updateSettings } = useSettings();
     const { toast } = useToast();
 
@@ -73,7 +71,7 @@ export default function Filter() {
 
     useEffect(() => {
         if (selectedBoroughs.length === 0) setSelectedBoroughs(initialBoroughs)
-    }, [selectedBoroughs, initialBoroughs])
+    }, [selectedBoroughs])
 
     const steps: JSX.Element[] = [
         <div key="step-1">Step 1: Add new Topic</div>,

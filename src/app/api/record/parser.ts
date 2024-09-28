@@ -380,8 +380,8 @@ export function parseStadt_Und_Land(
             });
         }
         if (/Gesamtmiete/.test(line)) {
-            const [, rent] = line.split('Gesamtmiete');
-            rent.replace('.', ',');
+            let [, rent] = line.split('Gesamtmiete');
+            rent = rent.replace('.', ',');
             setProperty('rent', rent, extractedRecords);
         }
 
