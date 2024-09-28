@@ -3,10 +3,18 @@ import { Record } from "../../../../prisma/generated/zod";
 import {
     recordAsText
 } from '../../../../lib/util';
-import { captureMessage } from "@sentry/nextjs";
+
+export const sendToNtfy = async (topic: string, body: string, host = process.env.NTFY_HOST) => {
+    await fetch(
+        `https://${host}/${topic}`,
+        {
+            method: 'POST',
+            body: body,
+        }
+    );
+}
 
 export async function sendNtfys(record: Record) {
-    console.log(`now ${record.id} `)
 
     // read out which notifications want this record
     const ntfys = await prisma.ntfy.findMany({
@@ -31,13 +39,8 @@ export async function sendNtfys(record: Record) {
     // send notifications
     for (const ntfy of ntfys) {
 
-        const data = await fetch(
-            `https://${ntfy.host || process.env.NTFY_HOST}/${ntfy.topic || ntfy.id
-            }`,
-            {
-                method: 'POST',
-                body: theRecordAsText,
-            }
-        );
+        sendToNtfy(ntfy.topic || ntfy.id, theRecordAsText, ntfy.host)
+
+
     }
 }

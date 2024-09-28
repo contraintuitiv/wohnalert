@@ -48,7 +48,14 @@ export default function Filter() {
     const [selectedBoroughs, setSelectedBoroughs] = useState<string[]>(
         settings.filters.boroughs || initialBoroughs
     );
-    const [topic, setTopic] = useState("")
+
+    const defaultTopic: string[] = []
+    if (settings.filters.maxRent) defaultTopic.push(`max${settings.filters.maxRent}E`)
+    if (settings.filters.minSize) defaultTopic.push(`min${settings.filters.minSize}m2`)
+    if (settings.filters.minRooms) defaultTopic.push(`min${settings.filters.minRooms}Zimmer`)
+    if (settings.filters.boroughs?.length !== initialBoroughs.length) defaultTopic.push(settings.filters.boroughs?.map(borough => borough.slice(0, 2)).join("-") || "")
+
+    const [topic, setTopic] = useState(defaultTopic.join("-"))
     const [maxRent, setMaxRent] = useState(settings.filters.maxRent);
     const [minSize, setMinSize] = useState(settings.filters.minSize);
     const [minRooms, setMinRooms] = useState(settings.filters.minRooms);
@@ -262,10 +269,10 @@ export default function Filter() {
                 >
                     wohnalert
                 </Button>
-            </a>
+            </a >
             {' '}
             abonnieren
-        </div>,
+        </div >,
         <div key="step-3">Step 3: Thats it already! Lucky you have an android!</div>,
     ];
 
@@ -601,18 +608,18 @@ export default function Filter() {
                                 </div>
                             ) : (
                                 <div className='flex gap-2 flex-col'>
-                                    <Input
+                                    {/* <Input
                                         type='text'
                                         value={topic}
                                         onChange={(e) => setTopic(e.target.value)}
                                         placeholder='Filter-Name'
-                                        maxLength={50}
+                                        maxLength={100}
                                         minLength={3}
-                                    />
+                                    /> */}
                                     <Button
                                         className="px-2"
                                         onClick={handleAddNtfyClick}
-                                        disabled={topic.length < 3 || topic.length > 50}
+                                        disabled={topic.length < 3 || topic.length > 100}
                                     >
                                         🔔 Push-Notification für diesen Filter
                                         erstellen
