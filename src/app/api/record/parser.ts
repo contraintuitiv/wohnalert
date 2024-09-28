@@ -348,6 +348,9 @@ export function parseStadt_Und_Land(
                 part = part.trim(); // Trim any extra whitespace
                 if (part.includes('Zimmer')) {
                     const [rooms] = part.split('Zimmer');
+                    if (extractedRecords[extractedRecords.length - 1].rooms) {
+                        return;
+                    }
                     setProperty('rooms', rooms, extractedRecords);
                     return;
                 }
