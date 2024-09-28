@@ -4,6 +4,8 @@ import { ZodError } from 'zod';
 import { prisma } from '../../../../lib/prisma';
 import { deconstructFilterQuery } from '../../../../lib/util';
 import validator from 'validator';
+import { sendToNtfy } from '../record/ntfy';
+import { maxFilterRent } from '@/app/filter';
 
 export async function GET(req: NextRequest) {
     const { minRent, maxRent, minRooms, maxRooms, minSize, maxSize, boroughs } =
@@ -36,9 +38,9 @@ export async function GET(req: NextRequest) {
 export async function POST(req: NextRequest): Promise<NextResponse> {
     const body = (await req.json()) as Partial<Ntfy>;
 
-    if (!body.topic || (body.topic && !validator.isLength(body.topic, { min: 3, max: 50 }))) {
+    if (!body.topic || (body.topic && !validator.isLength(body.topic, { min: 3, max: 100 }))) {
         return new NextResponse(
-            'topic must be min 3; max 50',
+            'topic must be min 3; max 100',
             {
                 status: 400,
             }
@@ -52,6 +54,15 @@ export async function POST(req: NextRequest): Promise<NextResponse> {
         const createdNtfy = await prisma.ntfy.create({
             data: data,
         });
+
+        sendToNtfy(createdNtfy.topic || createdNtfy.id,
+            `Hier kommen jetzt alle neuen Wohnungsangebote rein, die folgende Kriterien erfüllen:
+
+- maximale Miete: ${createdNtfy.maxRent && createdNtfy.maxRent > maxFilterRent ? maxFilterRent : createdNtfy.maxRent} €
+- minimale Größe: ${createdNtfy.minSize}m²
+- mindest Zimmerzahl: ${createdNtfy.minRooms}
+- Bezirke: ${JSON.parse(createdNtfy.boroughs || "[]").join(", ")}
+`, createdNtfy.host)
 
         return NextResponse.json(createdNtfy);
     } catch (err) {

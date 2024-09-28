@@ -29,6 +29,17 @@ export const initialBoroughs = [
     'Steglitz-Zehlendorf'
 ]
 
+// limits of possible Filters
+export const minFilterSize = 0
+export const maxFilterSize = 150
+export const stepFilterSize = 10
+export const minFilterRooms = 1
+export const maxFilterRooms = 5
+export const stepFilterRooms = 1
+export const minFilterRent = 250
+export const maxFilterRent = 3000
+export const stepFilterRent = 50
+
 export default function Filter() {
     const { settings, updateSettings } = useSettings();
     const { toast } = useToast();
@@ -37,7 +48,14 @@ export default function Filter() {
     const [selectedBoroughs, setSelectedBoroughs] = useState<string[]>(
         settings.filters.boroughs || initialBoroughs
     );
-    const [topic, setTopic] = useState("")
+
+    const defaultTopic: string[] = []
+    if (settings.filters.maxRent) defaultTopic.push(`max${settings.filters.maxRent}E`)
+    if (settings.filters.minSize) defaultTopic.push(`min${settings.filters.minSize}m2`)
+    if (settings.filters.minRooms) defaultTopic.push(`min${settings.filters.minRooms}Zimmer`)
+    if (settings.filters.boroughs?.length !== initialBoroughs.length) defaultTopic.push(settings.filters.boroughs?.map(borough => borough.slice(0, 2)).join("-") || "")
+
+    const [topic, setTopic] = useState(defaultTopic.join("-"))
     const [maxRent, setMaxRent] = useState(settings.filters.maxRent);
     const [minSize, setMinSize] = useState(settings.filters.minSize);
     const [minRooms, setMinRooms] = useState(settings.filters.minRooms);
@@ -251,10 +269,10 @@ export default function Filter() {
                 >
                     wohnalert
                 </Button>
-            </a>
+            </a >
             {' '}
             abonnieren
-        </div>,
+        </div >,
         <div key="step-3">Step 3: Thats it already! Lucky you have an android!</div>,
     ];
 
@@ -420,7 +438,7 @@ export default function Filter() {
                 <div className="flex flex-col md:flex-row space-y-5 md:space-y-0 md:space-x-5 border border-black rounded-sm p-3">
                     <div>
                         Bezirke:{' '}
-                        <div>
+                        <div className="flex flex-col gap-1">
                             {initialBoroughs.map(borough => (
                                 <div
                                     key={borough}
@@ -440,7 +458,7 @@ export default function Filter() {
                             ))}
 
                             <div
-                                className="flex items-center space-x-2"
+                                className="flex items-center space-x-2 mt-3"
                             >
                                 <Checkbox
                                     id="alle"
@@ -459,9 +477,10 @@ export default function Filter() {
                             <Label htmlFor="maxRent">maximale Miete</Label>
                             <Input
                                 type="number"
-                                placeholder="450"
-                                step="50"
-                                min="0"
+                                placeholder={`zw. ${minFilterRent}€ und ${maxFilterRent}€`}
+                                step={stepFilterRent}
+                                min={minFilterRent}
+                                max={maxFilterRent}
                                 value={maxRent}
                                 onChange={e => {
                                     if (
@@ -471,16 +490,23 @@ export default function Filter() {
                                         setMaxRent(parseFloat(e.target.value));
                                     }
                                 }}
+                                onBlur={(e) => {
+                                    const value = parseFloat(e.target.value)
+                                    if (value <= minFilterRent) return setMaxRent(minFilterRent)
+                                    if (value >= maxFilterRent) return setMaxRent(maxFilterRent)
+                                    setMaxRent(Math.ceil(value / stepFilterRent) * stepFilterRent);
+                                }}
                             />
                         </div>
                         <div className="flex w-full max-w-sm items-center space-x-2">
                             <Label htmlFor="minSize">minimale Größe (m²)</Label>
                             <Input
                                 type="number"
-                                placeholder="50"
+                                placeholder={`zw. ${minFilterSize} und ${maxFilterSize}`}
                                 value={minSize}
-                                step="10"
-                                min="0"
+                                step={stepFilterSize}
+                                min={minFilterSize}
+                                max={maxFilterSize}
                                 onChange={e => {
                                     if (
                                         isNumeric(e.target.value) ||
@@ -489,14 +515,22 @@ export default function Filter() {
                                         setMinSize(parseFloat(e.target.value));
                                     }
                                 }}
+                                onBlur={(e) => {
+                                    const value = parseFloat(e.target.value)
+                                    if (value <= minFilterSize) return setMinSize(minFilterSize)
+                                    if (value >= maxFilterSize) return setMinSize(maxFilterSize)
+                                    setMinSize(Math.floor(value / stepFilterSize) * stepFilterSize);
+                                }}
                             />
                         </div>
                         <div className="flex w-full max-w-sm items-center space-x-2">
                             <Label htmlFor="minRooms">mind. Zimmer</Label>
                             <Input
                                 type="number"
-                                placeholder="2"
-                                min="0"
+                                placeholder={`zw. ${minFilterRooms}-${maxFilterRooms}`}
+                                min={minFilterRooms}
+                                max={maxFilterRooms}
+                                step={stepFilterRooms}
                                 value={minRooms}
                                 onChange={e => {
                                     if (
@@ -506,14 +540,18 @@ export default function Filter() {
                                         setMinRooms(parseFloat(e.target.value));
                                     }
                                 }}
+                                onBlur={(e) => {
+                                    const value = parseFloat(e.target.value)
+                                    if (value <= minFilterRooms) return setMinRooms(minFilterRooms)
+                                    if (value >= maxFilterRooms) return setMinRooms(maxFilterRooms)
+                                    setMinRooms(Math.floor(value));
+                                }}
                             />
                         </div>
                         {/* Show button only if parameters have changed */}
                         {changedParameters && (
                             <Button
-                                onClick={() => {
-                                    updateFilters();
-                                }}
+                                onClick={updateFilters}
                             >
                                 Filter anwenden
                             </Button>
@@ -570,18 +608,18 @@ export default function Filter() {
                                 </div>
                             ) : (
                                 <div className='flex gap-2 flex-col'>
-                                    <Input
+                                    {/* <Input
                                         type='text'
                                         value={topic}
                                         onChange={(e) => setTopic(e.target.value)}
                                         placeholder='Filter-Name'
-                                        maxLength={50}
+                                        maxLength={100}
                                         minLength={3}
-                                    />
+                                    /> */}
                                     <Button
                                         className="px-2"
                                         onClick={handleAddNtfyClick}
-                                        disabled={topic.length < 3 || topic.length > 50}
+                                        disabled={topic.length < 3 || topic.length > 100}
                                     >
                                         🔔 Push-Notification für diesen Filter
                                         erstellen
