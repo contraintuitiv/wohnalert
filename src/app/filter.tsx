@@ -44,6 +44,7 @@ export default function Filter() {
     const [ntfy, setNtfy] = useState<Ntfy>();
     const [isModalOpen, setIsModalOpen] = useState(false);
     const [isFilterModalOpen, setIsFilterModalOpen] = useState(false);
+    const [isAndroidModalOpen, setIsAndroidModalOpen] = useState(false);
 
     useEffect(() => {
         const storedShowFilter = localStorage.getItem('showFilter');
@@ -74,9 +75,47 @@ export default function Filter() {
     }, [selectedBoroughs])
 
     const steps: JSX.Element[] = [
+        <div key="step-0">Step 0: Download {' '}
+            <a
+                href="https://apps.apple.com/de/app/ntfy/id1625396347"
+                className="underline"
+                target="_blank"
+                rel="noreferrer"
+            >
+                <Button variant={'outline'} size={'sm'}>
+                    Ntfy
+                </Button>{' '}
+            </a>{' '}
+            (you can do that in the End as well)
+        </div>,
         <div key="step-1">Step 1: Add new Topic</div>,
         <div key="step-2">
-            Step 2: Enter wohnalert as topic and https://ntfy.freizeitstress.org
+            Step 2: Enter wohnalert
+            <Button
+                size="sm"
+                className="bg-white mx-1"
+                variant={'outline'}
+                onClick={async () => {
+                    try {
+                        await navigator.clipboard.writeText(
+                            'wohnalert'
+                        );
+                        toast({
+                            title: 'In Zwischenablage kopiert',
+                            description:
+                                'wohnalert wurde in die Zwischenablage kopiert',
+                        });
+                    } catch {
+                        toast({
+                            title: 'Fehler',
+                            description:
+                                'wohnalert konnte nicht in die Zwischenablage kopiert werden',
+                        });
+                    }
+                }}
+            >
+                📋
+            </Button> as topic and https://ntfy.freizeitstress.org
             <Button
                 size="sm"
                 className="bg-white mx-1"
@@ -111,7 +150,7 @@ export default function Filter() {
     const filterSteps: JSX.Element[] = [
         <div key="step-1">Step 1: Create Custom Filter and confirm</div>,
         <div key="step-2">
-            Step 2: Create new Push-Notification Topic with this filter
+            Step 2: Enter Name and create Push Notifications
         </div>,
         <div key="step-3">
             Step 3 (Android): If You have the Ntfy App just{' '}
@@ -121,7 +160,7 @@ export default function Filter() {
             to the Topic
         </div>,
         <div key="step-4">
-            Step 4 (Iphone / Step 3 not working): Copy id:{' '}
+            Step 4 (Iphone / Step 3 not working): Copy topic name:
             <Button
                 size="sm"
                 className="bg-white mx-1"
@@ -150,7 +189,32 @@ export default function Filter() {
         </div>,
         <div key="step-5">Step 5: Open Ntfy App and add new Topic</div>,
         <div key="step-6">
-            Step 6: Enter copied ID as Topic and https://ntfy.freizeitstress.org
+            Step 6: Enter Topic Name and https://ntfy.freizeitstress.org
+            <Button
+                size="sm"
+                className="bg-white mx-1"
+                variant={'outline'}
+                onClick={async () => {
+                    try {
+                        if (ntfy) {
+                            await navigator.clipboard.writeText('https://ntfy.freizeitstress.org');
+                            toast({
+                                title: 'In Zwischenablage kopiert',
+                                description:
+                                    'Ntfy Topic ID wurde in die Zwischenablage kopiert',
+                            });
+                        }
+                    } catch {
+                        toast({
+                            title: 'Fehler',
+                            description:
+                                'Ntfy Topic ID konnte nicht in die Zwischenablage kopiert werden',
+                        });
+                    }
+                }}
+            >
+                📋
+            </Button>
             as server
         </div>,
         <div key="step-7">
@@ -159,7 +223,49 @@ export default function Filter() {
         </div>,
     ];
 
+    const androidSteps: JSX.Element[] = [
+        <div key="step-1">Step 1: Download
+            <a
+                href="https://play.google.com/store/apps/details?id=io.heckel.ntfy"
+                className="underline"
+                target="_blank"
+                rel="noreferrer"
+            >
+                <Button
+                    className="rounded-md py-2 ml-2"
+                    size={'sm'}
+                >
+                    Ntfy
+                </Button>
+            </a>{' '}
+            App</div>,
+        <div key="step-2">Step 2:Topic
+            <a
+                href={`ntfy://ntfy.freizeitstress.org/wohnalert`}
+                className="hover:underline"
+                title="direkt in ntfy.sh-App öffnen"
+            >
+                <Button
+                    className="rounded-md py-2 ml-2"
+                    size={'sm'}
+                >
+                    wohnalert
+                </Button>
+            </a>
+            {' '}
+            abonnieren
+        </div>,
+        <div key="step-3">Step 3: Thats it already! Lucky you have an android!</div>,
+    ];
+
+    const androidImages: string[] = [
+        '/doit.jpg',
+        '/tutorial_3.jpg',
+        '/iphone.jpg'
+    ]
+
     const tutorialImages: string[] = [
+        '/doit.jpg',
         '/tutorial_1.jpg',
         '/tutorial_2.jpg',
         '/tutorial_3.jpg',
@@ -259,52 +365,28 @@ export default function Filter() {
         <>
             <div className="mb-3 mt-2">
                 <Alert>
-                    <AlertTitle>
+                    <AlertTitle className='flex items-center justify-center'>
                         Alle neuen Angebote per Push bekommen
                     </AlertTitle>
                     <AlertDescription>
-                        App Ntfy für{' '}
-                        <a
-                            href="https://f-droid.org/de/packages/io.heckel.ntfy/"
-                            className="underline"
-                            target="_blank"
-                            rel="noreferrer"
-                        >
-                            Android
-                        </a>{' '}
-                        oder{' '}
-                        <a
-                            href="https://apps.apple.com/de/app/ntfy/id1625396347"
-                            className="underline"
-                            target="_blank"
-                            rel="noreferrer"
-                        >
-                            Iphone
-                        </a>{' '}
-                        runterladen und Topic abonnieren:{' '}
-                        <b>
-                            <a
-                                href={`ntfy://ntfy.freizeitstress.org/wohnalert`}
-                                className="hover:underline"
-                                title="direkt in ntfy.sh-App öffnen"
+                        <div className='flex justify-between px-4 pt-1'>
+                            <Button
+                                onClick={() => setIsAndroidModalOpen(true)}
+                                className="ml-2"
+                                size={'sm'}
                             >
-                                <Button
-                                    className="rounded-md py-2 ml-2"
-                                    size={'sm'}
-                                >
-                                    wohnalert
-                                </Button>
-                            </a>
-                        </b>{' '}
-                        <br /> (mit Iphone) manuell hinzufügen :{' '}
-                        <Button
-                            onClick={() => setIsModalOpen(true)}
-                            variant={'outline'}
-                            className="ml-2"
-                            size={'sm'}
-                        >
-                            ?
-                        </Button>
+                                Android
+                            </Button>
+                            <Button
+                                onClick={() => setIsModalOpen(true)}
+                                variant={'outline'}
+                                className="ml-2"
+                                size={'sm'}
+                            >
+                                Iphone
+                            </Button>
+                        </div>
+
                     </AlertDescription>
                 </Alert>
             </div>
@@ -515,6 +597,13 @@ export default function Filter() {
                 images={tutorialImages}
                 steps={steps}
                 title="How to use Ntfy.sh"
+            />
+            <TutorialModal
+                isOpen={isAndroidModalOpen}
+                onClose={() => setIsAndroidModalOpen(false)}
+                images={androidImages}
+                steps={androidSteps}
+                title="Android Tutorial"
             />
             <TutorialModal
                 isOpen={isFilterModalOpen}

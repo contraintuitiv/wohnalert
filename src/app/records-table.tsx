@@ -53,12 +53,13 @@ export default function RecordsTable({ recordId }: { recordId?: number }) {
         <>
             <div
                 ref={mapRef}
-                className="sticky top-0 p-4 left-0 right-0 z-10 bg-white w-full overflow-hidden max-h-[50vh] mb-2"
+                className="sticky top-0 p-4 left-0 right-0 z-10 bg-white w-full overflow-hidden max-h-[50vh] mb-1"
             >
                 <RecordsMap
                     currentRecord={currentRecord}
                 />
             </div>
+            {/* <div className='text-[8px] flex px-4 mb-1'>*Angebote sind schnell weg, darum Push-Benachrichtigungen</div> */}
             {/* Responsive table for mobile and desktop */}
             <div className="overflow-x-auto px-4">
                 <Table className="min-w-full table-auto text-sm">

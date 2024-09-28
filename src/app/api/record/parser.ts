@@ -358,8 +358,8 @@ export function parseStadt_Und_Land(
                 }
 
                 if (!part.includes('Zimmer') && !part.includes('m²')) {
-                    part.replace(' - ', '');
-                    setProperty('title', part, extractedRecords);
+                    const dings = part.replace(' - ', '');
+                    setProperty('title', dings, extractedRecords);
                     if (
                         part.includes('kein WBS') ||
                         part.includes('ohne WBS')
