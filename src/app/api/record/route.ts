@@ -36,10 +36,10 @@ export async function GET(req: NextRequest) {
         where: {
             ...(boroughs.length > 0
                 ? {
-                      OR: boroughs.map(name => ({
-                          borough: name,
-                      })),
-                  }
+                    OR: boroughs.map(name => ({
+                        borough: name,
+                    })),
+                }
                 : {}),
             rent: {
                 gte: minRent,
@@ -128,14 +128,13 @@ export async function POST(req: NextRequest) {
     for (const record of extractedRecords) {
         try {
             // try to find the record
-            const foundRecord = await prisma.record.findFirstOrThrow({
+            await prisma.record.findFirstOrThrow({
                 where: {
                     url: record.url,
                 },
             });
 
 
-            sendNtfys(foundRecord)
         } catch {
             // if not, create new record
 
