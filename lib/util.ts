@@ -83,6 +83,17 @@ ${record.road} ${record.house_number}\n\n`
   return output
 }
 
+// limits of possible Filters
+export const minFilterSize = 0
+export const maxFilterSize = 150
+export const stepFilterSize = 10
+export const minFilterRooms = 1
+export const maxFilterRooms = 5
+export const stepFilterRooms = 1
+export const minFilterRent = 250
+export const maxFilterRent = 3500
+export const stepFilterRent = 50
+
 
 export const deconstructFilterQuery = (reqUrl: string) => {
   const url = new URL(reqUrl)
@@ -114,9 +125,10 @@ export const deconstructFilterQuery = (reqUrl: string) => {
   const maxRooms = numberFromQuery("maxRooms") || 99999999999
   const minSize = numberFromQuery("minSize") || 1
   const maxSize = numberFromQuery("maxSize") || 99999999999
+  const recordId = numberFromQuery("recordId") || 0
   const boroughs = arrayFromQuery("boroughs") || []
 
-  return ({ minRent, maxRent, minRooms, maxRooms, minSize, maxSize, boroughs, outputFormat })
+  return ({ minRent, maxRent, minRooms, maxRooms, minSize, maxSize, boroughs, outputFormat, recordId })
 }
 
 export const niceDate = (date: Date) => {

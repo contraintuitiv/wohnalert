@@ -8,7 +8,7 @@ import { Settings, useSettings } from '@/context/settings-context';
 import { useCallback, useEffect, useState } from 'react';
 import { isNumeric } from 'validator';
 import { Ntfy, Prisma, Record } from '@prisma/client';
-import { filtersToQueryString } from '../../lib/util';
+import { filtersToQueryString, maxFilterRent, maxFilterRooms, maxFilterSize, minFilterRent, minFilterRooms, minFilterSize, stepFilterRent, stepFilterRooms, stepFilterSize } from '../../lib/util';
 import { fetchJson } from '../../lib/fetch';
 import { useToast } from '@/components/ui/use-toast';
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
@@ -29,16 +29,7 @@ export const initialBoroughs = [
     'Steglitz-Zehlendorf'
 ]
 
-// limits of possible Filters
-export const minFilterSize = 0
-export const maxFilterSize = 150
-export const stepFilterSize = 10
-export const minFilterRooms = 1
-export const maxFilterRooms = 5
-export const stepFilterRooms = 1
-export const minFilterRent = 250
-export const maxFilterRent = 3000
-export const stepFilterRent = 50
+
 
 export default function Filter() {
     const { settings, updateSettings } = useSettings();

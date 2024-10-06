@@ -2,14 +2,24 @@ import { NextRequest, NextResponse } from 'next/server';
 import { Ntfy, NtfyCreateInputSchema } from '../../../../prisma/generated/zod';
 import { ZodError } from 'zod';
 import { prisma } from '../../../../lib/prisma';
-import { deconstructFilterQuery } from '../../../../lib/util';
+import { deconstructFilterQuery, maxFilterRent } from '../../../../lib/util';
 import validator from 'validator';
 import { sendToNtfy } from '../record/ntfy';
-import { maxFilterRent } from '@/app/filter';
 
 export async function GET(req: NextRequest) {
+
+    console.log(req.url)
+
+    // return all ntfys if there is no query is set
+    if (!req.url.includes("?")) {
+        const allNtfys = await prisma.ntfy.findMany()
+
+        return NextResponse.json(allNtfys)
+    }
+
     const { minRent, maxRent, minRooms, maxRooms, minSize, maxSize, boroughs } =
         deconstructFilterQuery(req.url);
+
 
     try {
         const existingNtfy = await prisma.ntfy.findFirst({
@@ -30,7 +40,8 @@ export async function GET(req: NextRequest) {
         });
 
         return NextResponse.json(existingNtfy);
-    } catch {
+    } catch (e) {
+        console.log(e)
         return new NextResponse('Bad Request', { status: 403 });
     }
 }
