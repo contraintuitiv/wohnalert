@@ -402,13 +402,29 @@ export function parseFriedrichsheim(data: string[], extractedRecords: ExtractedR
         extractedRecords[extractedRecords.length - 1][key] = value.trim();
     };
 
-    // some arbitrary values because extraction to complicated
-    setProperty('rent', "1000", extractedRecords);
-    setProperty('address', "Rigaer Straße 91-92a 10247 Berlin", extractedRecords);
-    setProperty('rent', "500", extractedRecords);
-    setProperty('size', "50", extractedRecords);
-    setProperty('url', "https://www.friedrichsheim-eg.de/category/wohnungsangebote-fuer-alle/", extractedRecords);
-    setProperty('title', "Wohnung bei FriedrichsHeim! Adresse / Preis auf Website", extractedRecords);
-    setProperty('rooms', "2", extractedRecords);
+    data.forEach(line => {
+        const matches = line.match(/^\d+\sZimmer/);
+        if (matches) {
+
+            extractedRecords.push({
+                ...newExtractedRecord(),
+                rooms: matches[0]
+            });
+            // some arbitrary values because extraction to complicated
+
+            setProperty('address', line.split(",")?.[1] + " Berlin", extractedRecords);
+            setProperty('rent', "500", extractedRecords);
+            setProperty('size', "50", extractedRecords);
+            setProperty('title', "Wohnung bei FriedrichsHeim! Details auf Website", extractedRecords);
+            setProperty('rooms', "2", extractedRecords);
+        }
+
+        if (extractedRecords.length > 0 && line.startsWith("https://www.friedrichsheim-eg.de/")) {
+            setProperty('url', line.match(/https?:\/\/[^\s]+/g)?.[0] || "", extractedRecords);
+        }
+    });
+
     return extractedRecords;
+
+
 }

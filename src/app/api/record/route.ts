@@ -99,6 +99,7 @@ export async function POST(req: NextRequest) {
     const dataWatchHistory = await responseWatchHistory.json();
 
     const watches = Object.keys(dataWatchHistory);
+
     const lastWatch = watches.pop();
 
     // request last watch

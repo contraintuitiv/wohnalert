@@ -54,7 +54,7 @@ export type Record = z.infer<typeof RecordSchema>
 /////////////////////////////////////////
 
 export const NtfySchema = z.object({
-  id: z.string(),
+  id: z.string().uuid(),
   createdAt: z.coerce.date(),
   host: z.string(),
   topic: z.string().nullable(),
@@ -271,10 +271,10 @@ export const NtfyOrderByWithRelationInputSchema: z.ZodType<Prisma.NtfyOrderByWit
 }).strict();
 
 export const NtfyWhereUniqueInputSchema: z.ZodType<Prisma.NtfyWhereUniqueInput> = z.object({
-  id: z.string()
+  id: z.string().uuid()
 })
 .and(z.object({
-  id: z.string().optional(),
+  id: z.string().uuid().optional(),
   AND: z.union([ z.lazy(() => NtfyWhereInputSchema),z.lazy(() => NtfyWhereInputSchema).array() ]).optional(),
   OR: z.lazy(() => NtfyWhereInputSchema).array().optional(),
   NOT: z.union([ z.lazy(() => NtfyWhereInputSchema),z.lazy(() => NtfyWhereInputSchema).array() ]).optional(),
@@ -467,7 +467,7 @@ export const RecordUncheckedUpdateManyInputSchema: z.ZodType<Prisma.RecordUnchec
 }).strict();
 
 export const NtfyCreateInputSchema: z.ZodType<Prisma.NtfyCreateInput> = z.object({
-  id: z.string().optional(),
+  id: z.string().uuid().optional(),
   createdAt: z.coerce.date().optional(),
   host: z.string().optional(),
   topic: z.string().optional().nullable(),
@@ -482,7 +482,7 @@ export const NtfyCreateInputSchema: z.ZodType<Prisma.NtfyCreateInput> = z.object
 }).strict();
 
 export const NtfyUncheckedCreateInputSchema: z.ZodType<Prisma.NtfyUncheckedCreateInput> = z.object({
-  id: z.string().optional(),
+  id: z.string().uuid().optional(),
   createdAt: z.coerce.date().optional(),
   host: z.string().optional(),
   topic: z.string().optional().nullable(),
@@ -497,7 +497,7 @@ export const NtfyUncheckedCreateInputSchema: z.ZodType<Prisma.NtfyUncheckedCreat
 }).strict();
 
 export const NtfyUpdateInputSchema: z.ZodType<Prisma.NtfyUpdateInput> = z.object({
-  id: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
+  id: z.union([ z.string().uuid(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
   createdAt: z.union([ z.coerce.date(),z.lazy(() => DateTimeFieldUpdateOperationsInputSchema) ]).optional(),
   host: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
   topic: z.union([ z.string(),z.lazy(() => NullableStringFieldUpdateOperationsInputSchema) ]).optional().nullable(),
@@ -512,7 +512,7 @@ export const NtfyUpdateInputSchema: z.ZodType<Prisma.NtfyUpdateInput> = z.object
 }).strict();
 
 export const NtfyUncheckedUpdateInputSchema: z.ZodType<Prisma.NtfyUncheckedUpdateInput> = z.object({
-  id: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
+  id: z.union([ z.string().uuid(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
   createdAt: z.union([ z.coerce.date(),z.lazy(() => DateTimeFieldUpdateOperationsInputSchema) ]).optional(),
   host: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
   topic: z.union([ z.string(),z.lazy(() => NullableStringFieldUpdateOperationsInputSchema) ]).optional().nullable(),
@@ -527,7 +527,7 @@ export const NtfyUncheckedUpdateInputSchema: z.ZodType<Prisma.NtfyUncheckedUpdat
 }).strict();
 
 export const NtfyCreateManyInputSchema: z.ZodType<Prisma.NtfyCreateManyInput> = z.object({
-  id: z.string().optional(),
+  id: z.string().uuid().optional(),
   createdAt: z.coerce.date().optional(),
   host: z.string().optional(),
   topic: z.string().optional().nullable(),
@@ -542,7 +542,7 @@ export const NtfyCreateManyInputSchema: z.ZodType<Prisma.NtfyCreateManyInput> = 
 }).strict();
 
 export const NtfyUpdateManyMutationInputSchema: z.ZodType<Prisma.NtfyUpdateManyMutationInput> = z.object({
-  id: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
+  id: z.union([ z.string().uuid(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
   createdAt: z.union([ z.coerce.date(),z.lazy(() => DateTimeFieldUpdateOperationsInputSchema) ]).optional(),
   host: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
   topic: z.union([ z.string(),z.lazy(() => NullableStringFieldUpdateOperationsInputSchema) ]).optional().nullable(),
@@ -557,7 +557,7 @@ export const NtfyUpdateManyMutationInputSchema: z.ZodType<Prisma.NtfyUpdateManyM
 }).strict();
 
 export const NtfyUncheckedUpdateManyInputSchema: z.ZodType<Prisma.NtfyUncheckedUpdateManyInput> = z.object({
-  id: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
+  id: z.union([ z.string().uuid(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
   createdAt: z.union([ z.coerce.date(),z.lazy(() => DateTimeFieldUpdateOperationsInputSchema) ]).optional(),
   host: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
   topic: z.union([ z.string(),z.lazy(() => NullableStringFieldUpdateOperationsInputSchema) ]).optional().nullable(),
@@ -1282,10 +1282,18 @@ export const RecordUpdateArgsSchema: z.ZodType<Prisma.RecordUpdateArgs> = z.obje
 export const RecordUpdateManyArgsSchema: z.ZodType<Prisma.RecordUpdateManyArgs> = z.object({
   data: z.union([ RecordUpdateManyMutationInputSchema,RecordUncheckedUpdateManyInputSchema ]),
   where: RecordWhereInputSchema.optional(),
+  limit: z.number().optional(),
+}).strict() ;
+
+export const RecordUpdateManyAndReturnArgsSchema: z.ZodType<Prisma.RecordUpdateManyAndReturnArgs> = z.object({
+  data: z.union([ RecordUpdateManyMutationInputSchema,RecordUncheckedUpdateManyInputSchema ]),
+  where: RecordWhereInputSchema.optional(),
+  limit: z.number().optional(),
 }).strict() ;
 
 export const RecordDeleteManyArgsSchema: z.ZodType<Prisma.RecordDeleteManyArgs> = z.object({
   where: RecordWhereInputSchema.optional(),
+  limit: z.number().optional(),
 }).strict() ;
 
 export const NtfyCreateArgsSchema: z.ZodType<Prisma.NtfyCreateArgs> = z.object({
@@ -1322,8 +1330,16 @@ export const NtfyUpdateArgsSchema: z.ZodType<Prisma.NtfyUpdateArgs> = z.object({
 export const NtfyUpdateManyArgsSchema: z.ZodType<Prisma.NtfyUpdateManyArgs> = z.object({
   data: z.union([ NtfyUpdateManyMutationInputSchema,NtfyUncheckedUpdateManyInputSchema ]),
   where: NtfyWhereInputSchema.optional(),
+  limit: z.number().optional(),
+}).strict() ;
+
+export const NtfyUpdateManyAndReturnArgsSchema: z.ZodType<Prisma.NtfyUpdateManyAndReturnArgs> = z.object({
+  data: z.union([ NtfyUpdateManyMutationInputSchema,NtfyUncheckedUpdateManyInputSchema ]),
+  where: NtfyWhereInputSchema.optional(),
+  limit: z.number().optional(),
 }).strict() ;
 
 export const NtfyDeleteManyArgsSchema: z.ZodType<Prisma.NtfyDeleteManyArgs> = z.object({
   where: NtfyWhereInputSchema.optional(),
+  limit: z.number().optional(),
 }).strict() ;
