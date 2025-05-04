@@ -12,6 +12,7 @@ import * as Sentry from '@sentry/nextjs';
 import {
     ExtractedRecord,
     parseDegewo,
+    parseFriedrichsheim,
     parseGewobag,
     parseHowoge,
     parseStadt_Und_Land,
@@ -123,6 +124,9 @@ export async function POST(req: NextRequest) {
     }
     if (watchTitle.toLowerCase().startsWith('stadt_und_land')) {
         extractedRecords = parseStadt_Und_Land(data, extractedRecords);
+    }
+    if (watchTitle.toLowerCase().startsWith('friedrichsheim')) {
+        extractedRecords = parseFriedrichsheim(data, extractedRecords);
     }
 
     for (const record of extractedRecords) {

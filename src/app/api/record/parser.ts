@@ -392,3 +392,23 @@ export function parseStadt_Und_Land(
     });
     return extractedRecords;
 }
+
+export function parseFriedrichsheim(data: string[], extractedRecords: ExtractedRecord[]) {
+    const setProperty = (
+        key: PossibleProperties,
+        value: string,
+        extractedRecords: ExtractedRecord[]
+    ) => {
+        extractedRecords[extractedRecords.length - 1][key] = value.trim();
+    };
+
+    // some arbitrary values because extraction to complicated
+    setProperty('rent', "1000", extractedRecords);
+    setProperty('address', "Rigaer Straße 91-92a 10247 Berlin", extractedRecords);
+    setProperty('rent', "500", extractedRecords);
+    setProperty('size', "50", extractedRecords);
+    setProperty('url', "https://www.friedrichsheim-eg.de/category/wohnungsangebote-fuer-alle/", extractedRecords);
+    setProperty('title', "Wohnung bei FriedrichsHeim! Adresse / Preis auf Website", extractedRecords);
+    setProperty('rooms', "2", extractedRecords);
+    return extractedRecords;
+}
