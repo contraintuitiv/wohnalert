@@ -428,3 +428,37 @@ export function parseFriedrichsheim(data: string[], extractedRecords: ExtractedR
 
 
 }
+
+
+export function parseGenossenschaftTreptower(data: string[], extractedRecords: ExtractedRecord[]) {
+    const setProperty = (
+        key: PossibleProperties,
+        value: string,
+        extractedRecords: ExtractedRecord[]
+    ) => {
+        extractedRecords[extractedRecords.length - 1][key] = value.trim();
+    };
+
+    data.forEach(line => {
+        const matches = line.match(/^.+weg.+$/);
+        if (matches) {
+            const info = matches[0].split(",")?.[0].trim();
+
+            extractedRecords.push({
+                ...newExtractedRecord(),
+                title: info + " Schätzwerte. Genaue Infos auf Website",
+                size: "60",
+                rent: "650",
+                rooms: "2",
+                wbs: line.includes("WBS") ? "WBS" : "",
+                url: new URL("https://www.berliner-genossenschaft.de/angebote/aktuelle-angebote/?l=" + line).toString(),
+                address: info + " Berlin",
+                properties: [matches[0].split(",")?.[1].trim()]
+            });
+        }
+
+
+    });
+
+    return extractedRecords;
+}
